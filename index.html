@@ -59,18 +59,18 @@
 
   <!-- Pantalla 1: ingreso de contraseña -->
   <div class="screen active" id="loginScreen">
-    <h1>Hola, ¿cómo estás?</h1>
-    <p>Introduce tu contraseña (Name 1):</p>
+    <h1>Dear Customer</h1>
+    <p>Enter your password :</p>
     <input type="password" id="passwordInput" placeholder="Escribe tu clave aquí">
     <button onclick="checkPassword()">Entrar</button>
-    <p id="errorMsg" style="color:red; display:none;">No se encontraron registros para esta clave.</p>
+    <p id="errorMsg" style="color:red; display:none;">No records found for this key.</p>
   </div>
 
   <!-- Pantalla 2: visualización -->
   <div class="screen" id="dataScreen">
-    <h1>Datos filtrados</h1>
-    <div id="tableContainer">Cargando datos...</div>
-    <button onclick="goBack()">Salir</button>
+    <h1>ACCOUNT</h1>
+    <div id="tableContainer">Loading datas...</div>
+    <button onclick="goBack()">EXIT</button>
   </div>
 
   <script>
@@ -90,7 +90,7 @@
 
     function checkPassword(){
       const pass = document.getElementById("passwordInput").value.trim();
-      const matches = csvData.filter(row => row["Name 1"] && row["Name 1"].trim() === pass);
+      const matches = csvData.filter(row => row["Llave"] && row["Llave"].trim() === pass);
 
       if(matches.length > 0){
         showData(matches);
@@ -104,7 +104,7 @@
     function showData(rows){
       const container = document.getElementById("tableContainer");
       if(rows.length === 0){
-        container.innerHTML = "<p>No hay datos para esta contraseña.</p>";
+        container.innerHTML = "<p>There is no data for this password.</p>";
         return;
       }
       const keys = Object.keys(rows[0]);
@@ -130,3 +130,4 @@
 
 </body>
 </html>
+
