@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Visualización con llave</title>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f4f6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .screen {
+      display: none;
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 600px;
+    }
+    .screen.active { display: block; }
+    h1 { color: #4017aa; margin-bottom: 1rem; }
+    input[type="password"], button {
+      padding: 10px;
+      margin-top: 10px;
+      width: 100%;
+      font-size: 1rem;
+    }
+    button {
+      background: #4017aa;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+    button:hover { background: #2d0e77; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th { background: #4017aa; color: white; }
+  </style>
+</head>
+<body>
+
+  <!-- Pantalla 1: ingreso de contraseña -->
+  <div class="screen active" id="loginScreen">
+    <h1>Hola, ¿cómo estás?</h1>
+    <p>Introduce tu contraseña:</p>
+    <input type="password" id="passwordInput" placeholder="Escribe tu clave aquí">
+    <button onclick="checkPassword()">Entrar</button>
+    <p id="errorMsg" style="color:red; display:none;">Contraseña no encontrada en los datos.</p>
+  </div>
+
+  <!-- Pantalla 2: visualización -->
+  <div class="screen" id="dataScreen">
+    <h1>Datos filtrados</h1>
+    <div id="tableContainer">Cargando datos...</div>
+    <button onclick="goBack()">Salir</button>
+  </div>
+
+  <script>
+    let csvData = []; // se guardará el CSV aquí
+    const csvUrl = "data/datos.csv"; // coloca tu archivo CSV en /data/datos.csv en GitHub
+
+    // Cargar CSV al iniciar
+    fetch(csvUrl)
+      .then(res => res.text())
+      .then(csvText => {
+        const parsed = Papa.parse(csvText, {header:true});
+        csvData = parsed.data;
+      })
+      .catch(err => {
+        console.error("Error cargando CSV:", err);
+      });
+
+    function checkPassword(){
+      const pass = document.getElementById("passwordInput").value.trim();
+      const matches = csvData.filter(row => Object.values(row).includes(pass));
+
+      if(matches.length > 0){
+        showData(matches);
+        document.getElementById("loginScreen").classList.remove("active");
+        document.getElementById("dataScreen").classList.add("active");
+      } else {
+        document.getElementById("errorMsg").style.display = "block";
+      }
+    }
+
+    function showData(rows){
+      const container = document.getElementById("tableContainer");
+      if(rows.length === 0){
+        container.innerHTML = "<p>No hay datos para esta contraseña.</p>";
+        return;
+      }
+      const keys = Object.keys(rows[0]);
+      let html = "<table><thead><tr>";
+      keys.forEach(k => { html += `<th>${k}</th>`; });
+      html += "</tr></thead><tbody>";
+      rows.forEach(r => {
+        html += "<tr>";
+        keys.forEach(k => { html += `<td>${r[k]}</td>`; });
+        html += "</tr>";
+      });
+      html += "</tbody></table>";
+      container.innerHTML = html;
+    }
+
+    function goBack(){
+      document.getElementById("dataScreen").classList.remove("active");
+      document.getElementById("loginScreen").classList.add("active");
+      document.getElementById("passwordInput").value = "";
+      document.getElementById("errorMsg").style.display = "none";
+    }
+  </script>
+
+</body>
+</html>
