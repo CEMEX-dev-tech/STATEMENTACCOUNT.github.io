@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Visualización de Estado de Cuenta</title>
+  <title>Account Statement Viewer</title>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <style>
     body {
@@ -57,27 +57,27 @@
 </head>
 <body>
 
-  <!-- Pantalla 1: ingreso de contraseña -->
+  <!-- Screen 1: Login -->
   <div class="screen active" id="loginScreen">
-    <h1>Dear Customer</h1>
-    <p>Enter your password :</p>
-    <input type="password" id="passwordInput" placeholder="PASSWORD">
-    <button onclick="checkPassword()">ENTER</button>
-    <p id="errorMsg" style="color:red; display:none;">No records found for this key.</p>
+    <h1>Welcome!</h1>
+    <p>Please enter your password (Customer ID):</p>
+    <input type="password" id="passwordInput" placeholder="Enter your Customer ID">
+    <button onclick="checkPassword()">Submit</button>
+    <p id="errorMsg" style="color:red; display:none;">No records found for this Customer.</p>
   </div>
 
-  <!-- Pantalla 2: visualización -->
+  <!-- Screen 2: Data View -->
   <div class="screen" id="dataScreen">
-    <h1>ACCOUNT</h1>
-    <div id="tableContainer">Loading datas...</div>
-    <button onclick="goBack()">EXIT</button>
+    <h1>Filtered Data</h1>
+    <div id="tableContainer">Loading data...</div>
+    <button onclick="goBack()">Log Out</button>
   </div>
 
   <script>
     let csvData = []; 
-    const csvUrl = "data.csv"; // tu archivo está en la raíz
+    const csvUrl = "data.csv"; // CSV file in repo root
 
-    // Cargar CSV
+    // Load CSV
     fetch(csvUrl)
       .then(res => res.text())
       .then(csvText => {
@@ -85,7 +85,7 @@
         csvData = parsed.data;
       })
       .catch(err => {
-        console.error("Error cargando CSV:", err);
+        console.error("Error loading CSV:", err);
       });
 
     function checkPassword(){
@@ -104,7 +104,7 @@
     function showData(rows){
       const container = document.getElementById("tableContainer");
       if(rows.length === 0){
-        container.innerHTML = "<p>There is no data for this password.</p>";
+        container.innerHTML = "<p>No data available for this Customer.</p>";
         return;
       }
       const keys = Object.keys(rows[0]);
@@ -130,7 +130,3 @@
 
 </body>
 </html>
-
-
-
-
