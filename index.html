@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Visualización con llave</title>
+  <title>Visualización de Estado de Cuenta</title>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <style>
     body {
@@ -20,8 +20,9 @@
       padding: 2rem;
       border-radius: 12px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      width: 90%;
-      max-width: 600px;
+      width: 95%;
+      max-width: 1200px;
+      overflow-x: auto;
     }
     .screen.active { display: block; }
     h1 { color: #4017aa; margin-bottom: 1rem; }
@@ -43,11 +44,13 @@
       width: 100%;
       border-collapse: collapse;
       margin-top: 1rem;
+      font-size: 0.85rem;
     }
     th, td {
       border: 1px solid #ddd;
-      padding: 8px;
+      padding: 6px;
       text-align: left;
+      white-space: nowrap;
     }
     th { background: #4017aa; color: white; }
   </style>
@@ -57,10 +60,10 @@
   <!-- Pantalla 1: ingreso de contraseña -->
   <div class="screen active" id="loginScreen">
     <h1>Hola, ¿cómo estás?</h1>
-    <p>Introduce tu contraseña:</p>
+    <p>Introduce tu contraseña (Name 1):</p>
     <input type="password" id="passwordInput" placeholder="Escribe tu clave aquí">
     <button onclick="checkPassword()">Entrar</button>
-    <p id="errorMsg" style="color:red; display:none;">Contraseña no encontrada en los datos.</p>
+    <p id="errorMsg" style="color:red; display:none;">No se encontraron registros para esta clave.</p>
   </div>
 
   <!-- Pantalla 2: visualización -->
@@ -71,14 +74,14 @@
   </div>
 
   <script>
-    let csvData = []; // se guardará el CSV aquí
-    const csvUrl = "data.csv"; // coloca tu archivo CSV en /data/datos.csv en GitHub
+    let csvData = []; 
+    const csvUrl = "data.csv"; // tu archivo está en la raíz
 
-    // Cargar CSV al iniciar
+    // Cargar CSV
     fetch(csvUrl)
       .then(res => res.text())
       .then(csvText => {
-        const parsed = Papa.parse(csvText, {header:true});
+        const parsed = Papa.parse(csvText, {header:true, skipEmptyLines:true});
         csvData = parsed.data;
       })
       .catch(err => {
@@ -87,7 +90,7 @@
 
     function checkPassword(){
       const pass = document.getElementById("passwordInput").value.trim();
-      const matches = csvData.filter(row => Object.values(row).includes(pass));
+      const matches = csvData.filter(row => row["Name 1"] && row["Name 1"].trim() === pass);
 
       if(matches.length > 0){
         showData(matches);
@@ -110,7 +113,7 @@
       html += "</tr></thead><tbody>";
       rows.forEach(r => {
         html += "<tr>";
-        keys.forEach(k => { html += `<td>${r[k]}</td>`; });
+        keys.forEach(k => { html += `<td>${r[k] ?? ""}</td>`; });
         html += "</tr>";
       });
       html += "</tbody></table>";
@@ -127,4 +130,3 @@
 
 </body>
 </html>
-
