@@ -90,7 +90,7 @@
 
     function checkPassword(){
       const pass = document.getElementById("passwordInput").value.trim();
-      const matches = csvData.filter(row => row["Llave"] && row["Llave"].trim() === pass);
+      const matches = csvData.filter(row => row["KEY"] && row["KEY"].trim() === pass);
 
       if(matches.length > 0){
         showData(matches);
@@ -130,4 +130,5 @@
 
 </body>
 </html>
+
 
