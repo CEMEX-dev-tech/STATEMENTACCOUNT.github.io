@@ -21,7 +21,7 @@
       border-radius: 12px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       width: 95%;
-      max-width: 1400px;
+      max-width: 1200px;
       overflow-x: auto;
     }
     .screen.active { display: block; }
@@ -40,27 +40,6 @@
       border-radius: 6px;
     }
     button:hover { background: #2d0e77; }
-    #summaryBox {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-    .summary-card {
-      flex: 1 1 200px;
-      background: #f9f9ff;
-      border: 1px solid #4017aa;
-      border-radius: 20px;
-      padding: 1rem;
-      text-align: center;
-      font-size: 0.9rem;
-    }
-    .summary-card b {
-      display: block;
-      font-size: 1rem;
-      margin-bottom: 0.5rem;
-      color: #4017aa;
-    }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -101,19 +80,12 @@
   <!-- Screen 2: Data View -->
   <div class="screen" id="dataScreen">
     <h1>Filtered Data</h1>
-
-    <!-- Summary Dashboard -->
-    <div id="summaryBox"></div>
-
-    <!-- Filter by Company Code2 -->
     <div id="filterBox">
       <label for="companyFilter"><b>Filter by Company Code2:</b></label>
       <select id="companyFilter" onchange="applyCompanyFilter()">
         <option value="">-- All --</option>
       </select>
     </div>
-
-    <!-- Table -->
     <div id="tableContainer">Loading data...</div>
     <button onclick="goBack()">Log Out</button>
   </div>
@@ -157,7 +129,9 @@
         const parsed = Papa.parse(csvText, {header:true, skipEmptyLines:true});
         csvData = parsed.data;
       })
-      .catch(err => console.error("Error loading CSV:", err));
+      .catch(err => {
+        console.error("Error loading CSV:", err);
+      });
 
     function checkPassword(){
       const pass = document.getElementById("passwordInput").value.trim();
@@ -165,7 +139,6 @@
 
       if(currentCustomerRows.length > 0){
         populateCompanyFilter(currentCustomerRows);
-        showSummary(currentCustomerRows);
         showData(currentCustomerRows);
         document.getElementById("loginScreen").classList.remove("active");
         document.getElementById("dataScreen").classList.add("active");
@@ -194,62 +167,7 @@
       if(selectedCode){
         filtered = currentCustomerRows.filter(r => r["Company Code2"] === selectedCode);
       }
-      showSummary(filtered);
       showData(filtered);
-    }
-
-    function showSummary(rows){
-      if(rows.length === 0){
-        document.getElementById("summaryBox").innerHTML = "";
-        return;
-      }
-
-      const customerName = rows[0]["Customer Name"] || "";
-      const customerId = rows[0]["Customer"] || "";
-      const creditLimit = rows[0]["Credit limit"] || "";
-
-      let totalBalance = 0, totalOverdue = 0, payments = 0, bounced = 0;
-
-      rows.forEach(r => {
-        if(r["Balance"]){
-          let bal = parseFloat(r["Balance"].toString().replace(/,/g,""));
-          if(!isNaN(bal)) totalBalance += bal;
-        }
-
-        ["1 to 30 DD","31 to 60 DD","> TO 60 - DD"].forEach(c=>{
-          if(r[c]){
-            let v = parseFloat(r[c].toString().replace(/,/g,""));
-            if(!isNaN(v)) totalOverdue += v;
-          }
-        });
-
-        if(r["PAYMENTS AND CREDIT NOTES"]){
-          let p = parseFloat(r["PAYMENTS AND CREDIT NOTES"].toString().replace(/,/g,""));
-          if(!isNaN(p)) payments += p;
-        }
-
-        if(r["DESCRIPTION DOCUMENT"] && r["DESCRIPTION DOCUMENT"].toUpperCase().includes("BOUNCED CHEQUE")){
-          if(r["Balance"]){
-            let bal = parseFloat(r["Balance"].toString().replace(/,/g,""));
-            if(!isNaN(bal)) bounced += bal;
-          }
-        }
-      });
-
-      const overduePct = totalBalance > 0 ? (totalOverdue/totalBalance*100).toFixed(2) : 0;
-      const payCoverage = totalOverdue > 0 ? (Math.abs(payments)/totalOverdue*100).toFixed(2) : 0;
-
-      document.getElementById("summaryBox").innerHTML = `
-        <div class="summary-card"><b>CUSTOMER</b>${customerName}</div>
-        <div class="summary-card"><b>CREDIT LIMIT</b>${creditLimit || "0"}</div>
-        <div class="summary-card"><b># CUSTOMER</b>${customerId}</div>
-        <div class="summary-card"><b>TOTAL BALANCE</b>$${totalBalance ? totalBalance.toLocaleString() : "0"}</div>
-        <div class="summary-card"><b>TOTAL OVERDUE</b>$${totalOverdue ? totalOverdue.toLocaleString() : "0"}</div>
-        <div class="summary-card"><b>OVERDUE / TOTAL BALANCE</b>${overduePct}%</div>
-        <div class="summary-card"><b>PAYMENTS AND CREDIT NOTES</b>$${payments ? payments.toLocaleString() : "0"}</div>
-        <div class="summary-card"><b>BOUNCED CHEQUES</b>$${bounced ? bounced.toLocaleString() : "0"}</div>
-        <div class="summary-card"><b>PAYMENT MAY COVER OVERDUE</b>${payCoverage}%</div>
-      `;
     }
 
     function showData(rows){
@@ -270,7 +188,7 @@
         html += "<tr>";
         selectedColumns.forEach(c => {
           let value = r[c] ?? "";
-          if(totalColumns.includes(c) && value){
+          if(totalColumns.includes(c)){
             let num = parseFloat(value.toString().replace(/,/g,""));
             if(!isNaN(num)) totals[c] += num;
           }
@@ -279,11 +197,10 @@
         html += "</tr>";
       });
 
-      // Totals row
       html += "</tbody><tfoot><tr>";
       selectedColumns.forEach(c => {
         if(totalColumns.includes(c)){
-          html += `<td>${totals[c] ? totals[c].toLocaleString() : "0"}</td>`;
+          html += `<td>${totals[c].toLocaleString()}</td>`;
         } else if(c === selectedColumns[0]){
           html += "<td><b>Totals</b></td>";
         } else {
