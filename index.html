@@ -26,7 +26,7 @@
     }
     .screen.active { display: block; }
     h1 { color: #4017aa; margin-bottom: 1rem; }
-    input[type="password"], button {
+    input[type="password"], button, select {
       padding: 10px;
       margin-top: 10px;
       width: 100%;
@@ -57,6 +57,13 @@
       font-weight: bold;
       background: #f0f0f0;
     }
+    #filterBox {
+      margin-bottom: 1rem;
+      padding: 1rem;
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
   </style>
 </head>
 <body>
@@ -73,12 +80,19 @@
   <!-- Screen 2: Data View -->
   <div class="screen" id="dataScreen">
     <h1>Filtered Data</h1>
+    <div id="filterBox">
+      <label for="companyFilter"><b>Filter by Company Code:</b></label>
+      <select id="companyFilter" onchange="applyCompanyFilter()">
+        <option value="">-- All --</option>
+      </select>
+    </div>
     <div id="tableContainer">Loading data...</div>
     <button onclick="goBack()">Log Out</button>
   </div>
 
   <script>
     let csvData = []; 
+    let currentCustomerRows = [];
     const csvUrl = "data.csv"; // CSV file in repo root
 
     const selectedColumns = [
@@ -121,10 +135,11 @@
 
     function checkPassword(){
       const pass = document.getElementById("passwordInput").value.trim();
-      const matches = csvData.filter(row => row["Customer"] && row["Customer"].trim() === pass);
+      currentCustomerRows = csvData.filter(row => row["Customer"] && row["Customer"].trim() === pass);
 
-      if(matches.length > 0){
-        showData(matches);
+      if(currentCustomerRows.length > 0){
+        populateCompanyFilter(currentCustomerRows);
+        showData(currentCustomerRows);
         document.getElementById("loginScreen").classList.remove("active");
         document.getElementById("dataScreen").classList.add("active");
       } else {
@@ -132,10 +147,33 @@
       }
     }
 
+    function populateCompanyFilter(rows){
+      const select = document.getElementById("companyFilter");
+      select.innerHTML = `<option value="">-- All --</option>`;
+      const uniqueCodes = [...new Set(rows.map(r => r["Company Code"]))];
+      uniqueCodes.forEach(code => {
+        if(code){
+          const opt = document.createElement("option");
+          opt.value = code;
+          opt.textContent = code;
+          select.appendChild(opt);
+        }
+      });
+    }
+
+    function applyCompanyFilter(){
+      const selectedCode = document.getElementById("companyFilter").value;
+      let filtered = currentCustomerRows;
+      if(selectedCode){
+        filtered = currentCustomerRows.filter(r => r["Company Code"] === selectedCode);
+      }
+      showData(filtered);
+    }
+
     function showData(rows){
       const container = document.getElementById("tableContainer");
       if(rows.length === 0){
-        container.innerHTML = "<p>No data available for this Customer.</p>";
+        container.innerHTML = "<p>No data available for this filter.</p>";
         return;
       }
 
