@@ -53,6 +53,10 @@
       white-space: nowrap;
     }
     th { background: #4017aa; color: white; }
+    tfoot td {
+      font-weight: bold;
+      background: #f0f0f0;
+    }
   </style>
 </head>
 <body>
@@ -76,6 +80,33 @@
   <script>
     let csvData = []; 
     const csvUrl = "data.csv"; // CSV file in repo root
+
+    const selectedColumns = [
+      "Branch account",
+      "Name Branch",
+      "Division",
+      "DESCRIPTION DOCUMENT",
+      "Billing Document",
+      "Issued date",
+      "Expiration date",
+      "Days overdue to date",
+      "Amount",
+      "Balance",
+      "Currency",
+      "NOT OVERDUE",
+      "1 to 30 DD",
+      "31 to 60 DD",
+      "> TO 60 - DD"
+    ];
+
+    const totalColumns = [
+      "Amount",
+      "Balance",
+      "NOT OVERDUE",
+      "1 to 30 DD",
+      "31 to 60 DD",
+      "> TO 60 - DD"
+    ];
 
     // Load CSV
     fetch(csvUrl)
@@ -107,16 +138,39 @@
         container.innerHTML = "<p>No data available for this Customer.</p>";
         return;
       }
-      const keys = Object.keys(rows[0]);
+
+      let totals = {};
+      totalColumns.forEach(c => totals[c] = 0);
+
       let html = "<table><thead><tr>";
-      keys.forEach(k => { html += `<th>${k}</th>`; });
+      selectedColumns.forEach(c => { html += `<th>${c}</th>`; });
       html += "</tr></thead><tbody>";
+
       rows.forEach(r => {
         html += "<tr>";
-        keys.forEach(k => { html += `<td>${r[k] ?? ""}</td>`; });
+        selectedColumns.forEach(c => {
+          let value = r[c] ?? "";
+          if(totalColumns.includes(c)){
+            let num = parseFloat(value.toString().replace(/,/g,""));
+            if(!isNaN(num)) totals[c] += num;
+          }
+          html += `<td>${value}</td>`;
+        });
         html += "</tr>";
       });
-      html += "</tbody></table>";
+
+      html += "</tbody><tfoot><tr>";
+      selectedColumns.forEach(c => {
+        if(totalColumns.includes(c)){
+          html += `<td>${totals[c].toLocaleString()}</td>`;
+        } else if(c === selectedColumns[0]){
+          html += "<td><b>Totals</b></td>";
+        } else {
+          html += "<td></td>";
+        }
+      });
+      html += "</tr></tfoot></table>";
+
       container.innerHTML = html;
     }
 
