@@ -94,6 +94,13 @@
     let csvData = []; 
     let currentCustomerRows = [];
     const csvUrl = "data.csv"; // CSV file in repo root
+    const parsed = Papa.parse(csvText, {
+      header:true,
+      skipEmptyLines:true,
+      transformHeader: h => h.trim()
+    });
+    csvData = parsed.data;
+
 
     const selectedColumns = [
       "Branch account",
@@ -121,6 +128,7 @@
       "31 to 60 DD",
       "> TO 60 - DD"
     ];
+
 
     // Load CSV
     fetch(csvUrl)
@@ -222,4 +230,5 @@
 
 </body>
 </html>
+
 
