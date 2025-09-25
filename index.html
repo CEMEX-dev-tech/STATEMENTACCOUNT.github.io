@@ -149,7 +149,7 @@
 
     function populateCompanyFilter(rows){
       const select = document.getElementById("companyFilter");
-      select.innerHTML = `<option value="">-- All --</option>`;
+      select.innerHTML = `<option value="">All</option>`;
       const uniqueCodes = [...new Set(rows.map(r => r["Company Code"]))];
       uniqueCodes.forEach(code => {
         if(code){
@@ -222,3 +222,4 @@
 
 </body>
 </html>
+
