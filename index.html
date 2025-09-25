@@ -150,7 +150,7 @@
     function populateCompanyFilter(rows){
       const select = document.getElementById("companyFilter");
       select.innerHTML = `<option value="">All</option>`;
-      const uniqueCodes = [...new Set(rows.map(r => r["Company Code"]))];
+      const uniqueCodes = [...new Set(rows.map(r => r["COMPANY CODE2"]))];
       uniqueCodes.forEach(code => {
         if(code){
           const opt = document.createElement("option");
@@ -165,7 +165,7 @@
       const selectedCode = document.getElementById("companyFilter").value;
       let filtered = currentCustomerRows;
       if(selectedCode){
-        filtered = currentCustomerRows.filter(r => r["Company Code"] === selectedCode);
+        filtered = currentCustomerRows.filter(r => r["COMPANY CODE2"] === selectedCode);
       }
       showData(filtered);
     }
@@ -222,4 +222,5 @@
 
 </body>
 </html>
+
 
