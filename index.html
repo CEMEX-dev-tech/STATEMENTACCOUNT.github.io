@@ -206,38 +206,48 @@
 
       const customerName = rows[0]["Customer Name"] || "";
       const customerId = rows[0]["Customer"] || "";
-      const creditLimit = rows[0]["Credit limit"] || "$0";
+      const creditLimit = rows[0]["Credit limit"] || "";
 
       let totalBalance = 0, totalOverdue = 0, payments = 0, bounced = 0;
+
       rows.forEach(r => {
-        const bal = parseFloat((r["Balance"]||"0").toString().replace(/,/g,"")) || 0;
-        totalBalance += bal;
+        if(r["Balance"]){
+          let bal = parseFloat(r["Balance"].toString().replace(/,/g,""));
+          if(!isNaN(bal)) totalBalance += bal;
+        }
 
-        const d1 = parseFloat((r["1 to 30 DD"]||"0").toString().replace(/,/g,"")) || 0;
-        const d2 = parseFloat((r["31 to 60 DD"]||"0").toString().replace(/,/g,"")) || 0;
-        const d3 = parseFloat((r["> TO 60 - DD"]||"0").toString().replace(/,/g,"")) || 0;
-        totalOverdue += d1+d2+d3;
+        ["1 to 30 DD","31 to 60 DD","> TO 60 - DD"].forEach(c=>{
+          if(r[c]){
+            let v = parseFloat(r[c].toString().replace(/,/g,""));
+            if(!isNaN(v)) totalOverdue += v;
+          }
+        });
 
-        const pay = parseFloat((r["PAYMENTS AND CREDIT NOTES"]||"0").toString().replace(/,/g,"")) || 0;
-        payments += pay;
+        if(r["PAYMENTS AND CREDIT NOTES"]){
+          let p = parseFloat(r["PAYMENTS AND CREDIT NOTES"].toString().replace(/,/g,""));
+          if(!isNaN(p)) payments += p;
+        }
 
-        if((r["DESCRIPTION DOCUMENT"]||"").toUpperCase().includes("BOUNCED CHEQUE")){
-          bounced += bal;
+        if(r["DESCRIPTION DOCUMENT"] && r["DESCRIPTION DOCUMENT"].toUpperCase().includes("BOUNCED CHEQUE")){
+          if(r["Balance"]){
+            let bal = parseFloat(r["Balance"].toString().replace(/,/g,""));
+            if(!isNaN(bal)) bounced += bal;
+          }
         }
       });
 
-      const overduePct = totalBalance ? (totalOverdue/totalBalance*100).toFixed(2) : 0;
-      const payCoverage = totalOverdue ? (Math.abs(payments)/totalOverdue*100).toFixed(2) : 0;
+      const overduePct = totalBalance > 0 ? (totalOverdue/totalBalance*100).toFixed(2) : 0;
+      const payCoverage = totalOverdue > 0 ? (Math.abs(payments)/totalOverdue*100).toFixed(2) : 0;
 
       document.getElementById("summaryBox").innerHTML = `
         <div class="summary-card"><b>CUSTOMER</b>${customerName}</div>
-        <div class="summary-card"><b>CREDIT LIMIT</b>${creditLimit}</div>
+        <div class="summary-card"><b>CREDIT LIMIT</b>${creditLimit || "0"}</div>
         <div class="summary-card"><b># CUSTOMER</b>${customerId}</div>
-        <div class="summary-card"><b>TOTAL BALANCE</b>$${totalBalance.toLocaleString()}</div>
-        <div class="summary-card"><b>TOTAL OVERDUE</b>$${totalOverdue.toLocaleString()}</div>
+        <div class="summary-card"><b>TOTAL BALANCE</b>$${totalBalance ? totalBalance.toLocaleString() : "0"}</div>
+        <div class="summary-card"><b>TOTAL OVERDUE</b>$${totalOverdue ? totalOverdue.toLocaleString() : "0"}</div>
         <div class="summary-card"><b>OVERDUE / TOTAL BALANCE</b>${overduePct}%</div>
-        <div class="summary-card"><b>PAYMENTS AND CREDIT NOTES</b>$${payments.toLocaleString()}</div>
-        <div class="summary-card"><b>BOUNCED CHEQUES</b>$${bounced.toLocaleString()}</div>
+        <div class="summary-card"><b>PAYMENTS AND CREDIT NOTES</b>$${payments ? payments.toLocaleString() : "0"}</div>
+        <div class="summary-card"><b>BOUNCED CHEQUES</b>$${bounced ? bounced.toLocaleString() : "0"}</div>
         <div class="summary-card"><b>PAYMENT MAY COVER OVERDUE</b>${payCoverage}%</div>
       `;
     }
@@ -260,7 +270,7 @@
         html += "<tr>";
         selectedColumns.forEach(c => {
           let value = r[c] ?? "";
-          if(totalColumns.includes(c)){
+          if(totalColumns.includes(c) && value){
             let num = parseFloat(value.toString().replace(/,/g,""));
             if(!isNaN(num)) totals[c] += num;
           }
@@ -269,10 +279,11 @@
         html += "</tr>";
       });
 
+      // Totals row
       html += "</tbody><tfoot><tr>";
       selectedColumns.forEach(c => {
         if(totalColumns.includes(c)){
-          html += `<td>${totals[c].toLocaleString()}</td>`;
+          html += `<td>${totals[c] ? totals[c].toLocaleString() : "0"}</td>`;
         } else if(c === selectedColumns[0]){
           html += "<td><b>Totals</b></td>";
         } else {
