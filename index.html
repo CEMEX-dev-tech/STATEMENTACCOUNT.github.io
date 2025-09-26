@@ -64,6 +64,16 @@
       border: 1px solid #ddd;
       border-radius: 8px;
     }
+    #balanceBubble {
+      display: inline-block;
+      background: #4017aa;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-weight: bold;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
   </style>
 </head>
 <body>
@@ -80,10 +90,11 @@
   <!-- Screen 2: Data View -->
   <div class="screen" id="dataScreen">
     <h1>Filtered Data</h1>
-
+  <!-- Burbuja del Total Balance -->
+    <div id="balanceBubble" style="display:none;">Total Balance: $0</div>
     <!-- Filter by COMPANY.CODE2 -->
     <div id="filterBox">
-      <label for="companyFilter"><b>Filter by Company Code2:</b></label>
+      <label for="companyFilter"><b>Filter by Company Code:</b></label>
       <select id="companyFilter" onchange="applyCompanyFilter()">
         <option value="">-- All --</option>
       </select>
@@ -93,7 +104,7 @@
     <button onclick="goBack()">Log Out</button>
     </div>
     
-  <script>
+<script>
   let csvData = []; 
   let currentCustomerRows = [];
   const csvUrl = "data.csv"; // CSV en el mismo folder que index.html
@@ -177,35 +188,41 @@
 
   function showData(rows){
     const container = document.getElementById("tableContainer");
+    const bubble = document.getElementById("balanceBubble");
+
     if(rows.length === 0){
       container.innerHTML = "<p>No data available for this Customer.</p>";
+      bubble.style.display = "none";
       return;
     }
 
     let totals = {};
     totalColumns.forEach(c => totals[c] = 0);
 
+    let totalBalanceValue = 0; // 👉 suma del Balance
+
     let html = "<table><thead><tr>";
     selectedColumns.forEach(c => { html += `<th>${c}</th>`; });
     html += "</tr></thead><tbody>";
 
     rows.forEach(r => {
-    html += "<tr>";
-    selectedColumns.forEach(c => {
-      let value = r[c] ?? "";
-      if(totalColumns.includes(c) && value){
-        let num = parseFloat(value.toString().replace(/,/g,""));
-        if(!isNaN(num)) {
-          totals[c] += num;
-          if(c === "Balance"){   // si es la columna Balance, acumular
-            totalBalanceValue += num;
+      html += "<tr>";
+      selectedColumns.forEach(c => {
+        let value = r[c] ?? "";
+        if(totalColumns.includes(c) && value){
+          let num = parseFloat(value.toString().replace(/,/g,""));
+          if(!isNaN(num)) {
+            totals[c] += num;
+            if(c === "Balance"){   // si es Balance acumular
+              totalBalanceValue += num;
+            }
           }
         }
-      }
-      html += `<td>${value}</td>`;
+        html += `<td>${value}</td>`;
+      });
+      html += "</tr>";
     });
-    html += "</tr>";
-  });
+
     // Totals row
     html += "</tbody><tfoot><tr>";
     selectedColumns.forEach(c => {
@@ -220,6 +237,10 @@
     html += "</tr></tfoot></table>";
 
     container.innerHTML = html;
+
+    // 👉 Mostrar la burbuja con Total Balance
+    bubble.textContent = `Total Balance: $${totalBalanceValue.toLocaleString()}`;
+    bubble.style.display = "inline-block";
   }
 
   function goBack(){
@@ -228,10 +249,12 @@
     document.getElementById("passwordInput").value = "";
     document.getElementById("errorMsg").style.display = "none";
   }
-  </script>
+</script>
+
 
 </body>
 </html>
+
 
 
 
