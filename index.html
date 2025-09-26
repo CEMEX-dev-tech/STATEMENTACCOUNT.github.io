@@ -143,7 +143,7 @@
       const parsed = Papa.parse(csvText, {
         header:true, 
         skipEmptyLines:true,
-        transformHeader: h => h.trim()
+        transformHeader: h => h.trim() // respeta mayúsculas
       });
       csvData = parsed.data;
     })
@@ -213,7 +213,7 @@
           let num = parseFloat(value.toString().replace(/,/g,""));
           if(!isNaN(num)) {
             totals[c] += num;
-            if(c === "BALANCE"){   // si es Balance acumular
+            if(c === "BALANCE"){   // acumular Balance
               totalBalanceValue += num;
             }
           }
@@ -250,10 +250,9 @@
     document.getElementById("errorMsg").style.display = "none";
   }
 </script>
-
-
 </body>
 </html>
+
 
 
 
