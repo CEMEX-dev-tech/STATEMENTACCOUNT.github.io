@@ -80,155 +80,151 @@
   <!-- Screen 2: Data View -->
   <div class="screen" id="dataScreen">
     <h1>Filtered Data</h1>
+
+    <!-- Filter by COMPANY.CODE2 -->
     <div id="filterBox">
-      <label for="companyFilter"><b>Filter by Company Code:</b></label>
+      <label for="companyFilter"><b>Filter by Company Code2:</b></label>
       <select id="companyFilter" onchange="applyCompanyFilter()">
         <option value="">-- All --</option>
       </select>
     </div>
+
     <div id="tableContainer">Loading data...</div>
     <button onclick="goBack()">Log Out</button>
   </div>
 
   <script>
-    let csvData = []; 
-    let currentCustomerRows = [];
-    const csvUrl = "data.csv"; // CSV file in repo root
-    const parsed = Papa.parse(csvText, {
-      header:true,
-      skipEmptyLines:true,
-      transformHeader: h => h.trim()
+  let csvData = []; 
+  let currentCustomerRows = [];
+  const csvUrl = "data.csv"; // CSV en el mismo folder que index.html
+
+  const selectedColumns = [
+    "Branch.account",
+    "Name.Branch",
+    "Division",
+    "DESCRIPTION.DOCUMENT",
+    "Billing.Document",
+    "Issued.date",
+    "Expiration.date",
+    "Days.overdue.to.date",
+    "Amount",
+    "Balance",
+    "Currency",
+    "NOT.OVERDUE",
+    "1.to.30.DD",
+    "31.to.60.DD",
+    ">.TO.60.-.DD"
+  ];
+
+  const totalColumns = [
+    "Amount",
+    "Balance",
+    "NOT.OVERDUE",
+    "1.to.30.DD",
+    "31.to.60.DD",
+    ">.TO.60.-.DD"
+  ];
+
+  // Load CSV
+  fetch(csvUrl)
+    .then(res => res.text())
+    .then(csvText => {
+      const parsed = Papa.parse(csvText, {
+        header:true, 
+        skipEmptyLines:true,
+        transformHeader: h => h.trim()
+      });
+      csvData = parsed.data;
+    })
+    .catch(err => console.error("Error loading CSV:", err));
+
+  function checkPassword(){
+    const pass = document.getElementById("passwordInput").value.trim();
+    currentCustomerRows = csvData.filter(row => row["Customer"] && row["Customer"].trim() === pass);
+
+    if(currentCustomerRows.length > 0){
+      populateCompanyFilter(currentCustomerRows);
+      showData(currentCustomerRows);
+      document.getElementById("loginScreen").classList.remove("active");
+      document.getElementById("dataScreen").classList.add("active");
+    } else {
+      document.getElementById("errorMsg").style.display = "block";
+    }
+  }
+
+  function populateCompanyFilter(rows){
+    const select = document.getElementById("companyFilter");
+    select.innerHTML = `<option value="">-- All --</option>`;
+    const uniqueCodes = [...new Set(rows.map(r => r["COMPANY.CODE2"]))];
+    uniqueCodes.forEach(code => {
+      if(code){
+        const opt = document.createElement("option");
+        opt.value = code;
+        opt.textContent = code;
+        select.appendChild(opt);
+      }
     });
-    csvData = parsed.data;
+  }
 
+  function applyCompanyFilter(){
+    const selectedCode = document.getElementById("companyFilter").value;
+    let filtered = currentCustomerRows;
+    if(selectedCode){
+      filtered = currentCustomerRows.filter(r => r["COMPANY.CODE2"] === selectedCode);
+    }
+    showData(filtered);
+  }
 
-    const selectedColumns = [
-      "Branch account",
-      "Name Branch",
-      "Division",
-      "DESCRIPTION DOCUMENT",
-      "Billing Document",
-      "Issued date",
-      "Expiration date",
-      "Days overdue to date",
-      "Amount",
-      "Balance",
-      "Currency",
-      "NOT OVERDUE",
-      "1 to 30 DD",
-      "31 to 60 DD",
-      "> TO 60 - DD"
-    ];
-
-    const totalColumns = [
-      "Amount",
-      "Balance",
-      "NOT OVERDUE",
-      "1 to 30 DD",
-      "31 to 60 DD",
-      "> TO 60 - DD"
-    ];
-
-
-    // Load CSV
-    fetch(csvUrl)
-      .then(res => res.text())
-      .then(csvText => {
-        const parsed = Papa.parse(csvText, {header:true, skipEmptyLines:true});
-        csvData = parsed.data;
-      })
-      .catch(err => {
-        console.error("Error loading CSV:", err);
-      });
-
-    function checkPassword(){
-      const pass = document.getElementById("passwordInput").value.trim();
-      currentCustomerRows = csvData.filter(row => row["Customer"] && row["Customer"].trim() === pass);
-
-      if(currentCustomerRows.length > 0){
-        populateCompanyFilter(currentCustomerRows);
-        showData(currentCustomerRows);
-        document.getElementById("loginScreen").classList.remove("active");
-        document.getElementById("dataScreen").classList.add("active");
-      } else {
-        document.getElementById("errorMsg").style.display = "block";
-      }
+  function showData(rows){
+    const container = document.getElementById("tableContainer");
+    if(rows.length === 0){
+      container.innerHTML = "<p>No data available for this Customer.</p>";
+      return;
     }
 
-    function populateCompanyFilter(rows){
-      const select = document.getElementById("companyFilter");
-      select.innerHTML = `<option value="">-- All --</option>`;
-      const uniqueCodes = [...new Set(rows.map(r => r["COMPANY CODE2"]))];
-      uniqueCodes.forEach(code => {
-        if(code){
-          const opt = document.createElement("option");
-          opt.value = code;
-          opt.textContent = code;
-          select.appendChild(opt);
-        }
-      });
-    }
+    let totals = {};
+    totalColumns.forEach(c => totals[c] = 0);
 
-    function applyCompanyFilter(){
-      const selectedCode = document.getElementById("companyFilter").value;
-      let filtered = currentCustomerRows;
-      if(selectedCode){
-        filtered = currentCustomerRows.filter(r => r["COMPANY CODE2"] === selectedCode);
-      }
-      showData(filtered);
-    }
+    let html = "<table><thead><tr>";
+    selectedColumns.forEach(c => { html += `<th>${c}</th>`; });
+    html += "</tr></thead><tbody>";
 
-    function showData(rows){
-      const container = document.getElementById("tableContainer");
-      if(rows.length === 0){
-        container.innerHTML = "<p>No data available for this filter.</p>";
-        return;
-      }
-
-      let totals = {};
-      totalColumns.forEach(c => totals[c] = 0);
-
-      let html = "<table><thead><tr>";
-      selectedColumns.forEach(c => { html += `<th>${c}</th>`; });
-      html += "</tr></thead><tbody>";
-
-      rows.forEach(r => {
-        html += "<tr>";
-        selectedColumns.forEach(c => {
-          let value = r[c] ?? "";
-          if(totalColumns.includes(c)){
-            let num = parseFloat(value.toString().replace(/,/g,""));
-            if(!isNaN(num)) totals[c] += num;
-          }
-          html += `<td>${value}</td>`;
-        });
-        html += "</tr>";
-      });
-
-      html += "</tbody><tfoot><tr>";
+    rows.forEach(r => {
+      html += "<tr>";
       selectedColumns.forEach(c => {
-        if(totalColumns.includes(c)){
-          html += `<td>${totals[c].toLocaleString()}</td>`;
-        } else if(c === selectedColumns[0]){
-          html += "<td><b>Totals</b></td>";
-        } else {
-          html += "<td></td>";
+        let value = r[c] ?? "";
+        if(totalColumns.includes(c) && value){
+          let num = parseFloat(value.toString().replace(/,/g,""));
+          if(!isNaN(num)) totals[c] += num;
         }
+        html += `<td>${value}</td>`;
       });
-      html += "</tr></tfoot></table>";
+      html += "</tr>";
+    });
 
-      container.innerHTML = html;
-    }
+    // Totals row
+    html += "</tbody><tfoot><tr>";
+    selectedColumns.forEach(c => {
+      if(totalColumns.includes(c)){
+        html += `<td>${totals[c] ? totals[c].toLocaleString() : "0"}</td>`;
+      } else if(c === selectedColumns[0]){
+        html += "<td><b>Totals</b></td>";
+      } else {
+        html += "<td></td>";
+      }
+    });
+    html += "</tr></tfoot></table>";
 
-    function goBack(){
-      document.getElementById("dataScreen").classList.remove("active");
-      document.getElementById("loginScreen").classList.add("active");
-      document.getElementById("passwordInput").value = "";
-      document.getElementById("errorMsg").style.display = "none";
-    }
+    container.innerHTML = html;
+  }
+
+  function goBack(){
+    document.getElementById("dataScreen").classList.remove("active");
+    document.getElementById("loginScreen").classList.add("active");
+    document.getElementById("passwordInput").value = "";
+    document.getElementById("errorMsg").style.display = "none";
+  }
   </script>
 
 </body>
 </html>
-
-
