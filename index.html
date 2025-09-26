@@ -110,30 +110,30 @@
   const csvUrl = "data.csv"; // CSV en el mismo folder que index.html
 
   const selectedColumns = [
-    "Branch.account",
-    "Name.Branch",
-    "Division",
-    "DESCRIPTION.DOCUMENT",
-    "Billing.Document",
-    "Issued.date",
-    "Expiration.date",
-    "Days.overdue.to.date",
-    "Amount",
-    "Balance",
-    "Currency",
-    "NOT.OVERDUE",
-    "1.to.30.DD",
-    "31.to.60.DD",
-    ">.TO.60.-.DD"
+    "BRANCH ACCOUNT",
+    "NAME BRANCH",
+    "DIVISION",
+    "DESCRIPTION DOCUMENT",
+    "# DOCUMENT",
+    "ISSUED DATE",
+    "EXPIRATION DATE",
+    "DAYS OVERDUE TO DATE",
+    "AMOUNT",
+    "BALANCE",
+    "CURRENCY",
+    "NOT OVERDUE",
+    "1 TO 30 DD",
+    "31 TO 60 DD",
+    "> TO 60 - DD"
   ];
 
   const totalColumns = [
-    "Amount",
-    "Balance",
-    "NOT.OVERDUE",
-    "1.to.30.DD",
-    "31.to.60.DD",
-    ">.TO.60.-.DD"
+    "AMOUNT",
+    "BALANCE",
+    "NOT OVERDUE",
+    "1 TO 30 DD",
+    "31 TO 60 DD",
+    "> TO 60 - DD"
   ];
 
   // Load CSV
@@ -151,7 +151,7 @@
 
   function checkPassword(){
     const pass = document.getElementById("passwordInput").value.trim();
-    currentCustomerRows = csvData.filter(row => row["Customer"] && row["Customer"].trim() === pass);
+    currentCustomerRows = csvData.filter(row => row["CUSTOMER"] && row["CUSTOMER"].trim() === pass);
 
     if(currentCustomerRows.length > 0){
       populateCompanyFilter(currentCustomerRows);
@@ -165,8 +165,8 @@
 
   function populateCompanyFilter(rows){
     const select = document.getElementById("companyFilter");
-    select.innerHTML = `<option value="">-- All --</option>`;
-    const uniqueCodes = [...new Set(rows.map(r => r["COMPANY.CODE2"]))];
+    select.innerHTML = `<option value="">All</option>`;
+    const uniqueCodes = [...new Set(rows.map(r => r["COMPANY CODE2"]))];
     uniqueCodes.forEach(code => {
       if(code){
         const opt = document.createElement("option");
@@ -181,7 +181,7 @@
     const selectedCode = document.getElementById("companyFilter").value;
     let filtered = currentCustomerRows;
     if(selectedCode){
-      filtered = currentCustomerRows.filter(r => r["COMPANY.CODE2"] === selectedCode);
+      filtered = currentCustomerRows.filter(r => r["COMPANY CODE2"] === selectedCode);
     }
     showData(filtered);
   }
@@ -213,7 +213,7 @@
           let num = parseFloat(value.toString().replace(/,/g,""));
           if(!isNaN(num)) {
             totals[c] += num;
-            if(c === "Balance"){   // si es Balance acumular
+            if(c === "BALANCE"){   // si es Balance acumular
               totalBalanceValue += num;
             }
           }
@@ -254,6 +254,7 @@
 
 </body>
 </html>
+
 
 
 
