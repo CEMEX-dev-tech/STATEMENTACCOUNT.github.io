@@ -190,18 +190,22 @@
     html += "</tr></thead><tbody>";
 
     rows.forEach(r => {
-      html += "<tr>";
-      selectedColumns.forEach(c => {
-        let value = r[c] ?? "";
-        if(totalColumns.includes(c) && value){
-          let num = parseFloat(value.toString().replace(/,/g,""));
-          if(!isNaN(num)) totals[c] += num;
+    html += "<tr>";
+    selectedColumns.forEach(c => {
+      let value = r[c] ?? "";
+      if(totalColumns.includes(c) && value){
+        let num = parseFloat(value.toString().replace(/,/g,""));
+        if(!isNaN(num)) {
+          totals[c] += num;
+          if(c === "Balance"){   // si es la columna Balance, acumular
+            totalBalanceValue += num;
+          }
         }
-        html += `<td>${value}</td>`;
-      });
-      html += "</tr>";
+      }
+      html += `<td>${value}</td>`;
     });
-
+    html += "</tr>";
+  });
     // Totals row
     html += "</tbody><tfoot><tr>";
     selectedColumns.forEach(c => {
@@ -228,5 +232,6 @@
 
 </body>
 </html>
+
 
 
