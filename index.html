@@ -15,16 +15,18 @@
       min-height: 100vh;
       margin: 0;
     }
-    .screen {
+      .screen {
       display: none;
       background: white;
       padding: 2rem;
       border-radius: 12px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      width: 95%;
-      max-width: 1200px;
+      width: 100%;          /* ✅ usar todo el ancho */
+      max-width: none;      /* ✅ sin límite */
       overflow-x: auto;
+      box-sizing: border-box;
     }
+
     .screen.active { display: block; }
     h1 { color: #4017aa; margin-bottom: 1rem; }
     input[type="password"], button, select {
@@ -262,6 +264,7 @@
 </script>
 </body>
 </html>
+
 
 
 
