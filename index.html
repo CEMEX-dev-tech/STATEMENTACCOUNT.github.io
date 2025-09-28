@@ -277,18 +277,18 @@ async function exportPDF() {
   const doc = new jsPDF({
     orientation: "landscape",
     unit: "pt",
-    format: "a4"
+    format: "a2"   // 📌 mucho más grande que A4
   });
 
   // Título
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(14);
-  doc.text("Account Statement", 40, 30);
+  doc.setFontSize(20);
+  doc.text("Account Statement", 50, 40);
 
   // Fecha
-  doc.setFontSize(10);
+  doc.setFontSize(12);
   doc.setFont("helvetica", "normal");
-  doc.text("Generated: " + new Date().toLocaleDateString(), 750, 30);
+  doc.text("Generated: " + new Date().toLocaleDateString(), doc.internal.pageSize.getWidth() - 150, 40);
 
   const table = document.querySelector("#tableContainer table");
   if (!table) {
@@ -298,52 +298,37 @@ async function exportPDF() {
 
   doc.autoTable({
     html: table,
-    startY: 50,
+    startY: 70,
     theme: "grid",
     headStyles: {
       fillColor: [6, 0, 182], // azul #0600b6
       textColor: [255, 255, 255],
       fontStyle: "bold",
       halign: "center",
-      valign: "middle"
+      valign: "middle",
+      fontSize: 10
     },
     bodyStyles: {
       textColor: [0, 0, 0],
-      fontSize: 8,
+      fontSize: 9,
       valign: "middle"
     },
     footStyles: {
-      fillColor: [230, 230, 230], // gris para totales
+      fillColor: [230, 230, 230],
       textColor: [0, 0, 0],
-      fontStyle: "bold"
+      fontStyle: "bold",
+      fontSize: 10
     },
     styles: {
       font: "helvetica",
       lineColor: [220, 220, 220],
       lineWidth: 0.5,
-      halign: "center", // centrado
+      halign: "center",
       valign: "middle"
     },
-    columnStyles: {
-      0: { cellWidth: 70 },   // Branch Account
-      1: { cellWidth: 90 },   // Name Branch
-      2: { cellWidth: 70 },   // Division
-      3: { cellWidth: 100 },  // Description Document
-      4: { cellWidth: 90 },   // # Document
-      5: { cellWidth: 70 },   // Issued Date
-      6: { cellWidth: 80 },   // Expiration Date
-      7: { cellWidth: 90 },   // Days overdue
-      8: { cellWidth: 80 },   // Amount
-      9: { cellWidth: 80 },   // Balance
-      10: { cellWidth: 60 },  // Currency
-      11: { cellWidth: 70 },  // Not Overdue
-      12: { cellWidth: 70 },  // 1 to 30 DD
-      13: { cellWidth: 70 },  // 31 to 60 DD
-      14: { cellWidth: 80 }   // > to 60 DD
-    },
     didParseCell: function (data) {
-      if (data.section === "body" && data.column.index === 7) { 
-        // columna 7 = DAYS OVERDUE TO DATE
+      // 📌 Semáforo en columna DAYS OVERDUE TO DATE
+      if (data.section === "body" && data.column.index === 7) {
         let val = parseFloat((data.cell.raw || "").toString().replace(/,/g, ""));
         if (!isNaN(val)) {
           if (val < 0) {
@@ -365,6 +350,7 @@ async function exportPDF() {
 }
 
 
+
 function goBack(){
     document.getElementById("dataScreen").classList.remove("active");
     document.getElementById("loginScreen").classList.add("active");
@@ -374,6 +360,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
