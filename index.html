@@ -124,13 +124,14 @@
   <!-- Burbuja del Total Balance -->
     <div id="balanceBubble" style="display:none;">Total Balance: $0</div>
     <!-- Filter by COMPANY.CODE2 -->
+    
+    <div id="filterBox">
+      <label for="companyFilter"><b>Filter by Company Code:</b></label>
+      <select id="companyFilter" onchange="applyCompanyFilter()">
+        <option value="">All</option>
+      </select>
+    </div>    
     <div id="filterLegendWrapper">
-      <div id="filterBox">
-        <label for="companyFilter"><b>Filter by Company Code:</b></label>
-        <select id="companyFilter" onchange="applyCompanyFilter()">
-          <option value="">All</option>
-        </select>
-      </div>    
       <div id="legendContainer">
         <div><span class="legend-box" style="background:green;"></span> On-time invoices</div>
         <div><span class="legend-box" style="background:orange;"></span> Upcoming invoices</div>
@@ -458,6 +459,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
