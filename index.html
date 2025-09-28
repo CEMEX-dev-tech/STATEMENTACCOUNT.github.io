@@ -444,13 +444,17 @@ function showData(rows){
           else if(num === 0) color = "orange";
           else if(num > 0) color = "red";
           html += `<td style="color:${color}; font-weight:bold;">${value}</td>`;
-        } else {
+        }
+        else if(totalColumns.includes(c) && value !== ""){
+          let num = parseFloat(value.toString().replace(/,/g,""));
+          html += `<td>${!isNaN(num) ? num.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : value}</td>`;
+        } 
+        else {
           html += `<td>${value}</td>`;
         }
       });
-      html += "</tr>";
+        html += "</tr>";
     });
-
     // Totals row
     html += "</tbody><tfoot><tr>";
     selectedColumns.forEach(c => {
@@ -588,6 +592,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
