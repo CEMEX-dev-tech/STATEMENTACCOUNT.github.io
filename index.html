@@ -460,14 +460,14 @@ function showData(rows){
   
   const bubblesContainer = document.getElementById("bubblesContainer");
   bubblesContainer.innerHTML = `
-    <h2 style="color:#0600b6; margin-top:1rem;">Summary</h2>
+    
     <table style="width:auto; border-collapse:collapse; margin-top:0.5rem; font-family:'Outfit',sans-serif; font-size:1rem;">
       <tr>
         <th style="background:#0600b6; color:white; padding:6px 12px; text-align:left;">Metric</th>
         <th style="background:#0600b6; color:white; padding:6px 12px; text-align:right;">Value</th>
       </tr>
       <tr>
-        <td style="padding:6px 12px;">Total Balance (Bounced Cheque, Invoice, Debit Note, Refund)</td>
+        <td style="padding:6px 12px;">Total Portfolio</td>
         <td style="padding:6px 12px; text-align:right;">$${totalFirstBalance.toLocaleString()}</td>
       </tr>
       <tr>
@@ -475,7 +475,7 @@ function showData(rows){
         <td style="padding:6px 12px; text-align:right; font-weight:bold; color:#f7212e;">$${overdueTotal.toLocaleString()}</td>
       </tr>
       <tr>
-        <td style="padding:6px 12px;">Total Balance (Payment, Credit Note, Transfer)</td>
+        <td style="padding:6px 12px;">Total Balance payment in the account</td>
         <td style="padding:6px 12px; text-align:right;">$${totalSecondBalance.toLocaleString()}</td>
       </tr>
       <tr>
@@ -556,6 +556,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
