@@ -99,6 +99,16 @@
   <!-- Screen 2: Data View -->
   <div class="screen" id="dataScreen">
     <!-- Legend -->
+    <h1>Filtered Data</h1>
+  <!-- Burbuja del Total Balance -->
+    <div id="balanceBubble" style="display:none;">Total Balance: $0</div>
+    <!-- Filter by COMPANY.CODE2 -->
+    <div id="filterBox">
+      <label for="companyFilter"><b>Filter by Company Code:</b></label>
+      <select id="companyFilter" onchange="applyCompanyFilter()">
+        <option value="">All</option>
+      </select>
+    </div>
     <div id="legend" style="position:absolute; top:20px; right:20px; font-family:'Outfit', sans-serif; font-size:0.9rem; text-align:right;">
       <div style="display:flex; align-items:center; justify-content:flex-end; margin-bottom:5px;">
         <span style="margin-right:8px; font-weight:bold;">On-time invoices</span>
@@ -112,16 +122,6 @@
         <span style="margin-right:8px; font-weight:bold;">Overdue invoices</span>
         <div style="width:20px; height:20px; background:darkred; border:1px solid #000;"></div>
       </div>
-    </div>
-    <h1>Filtered Data</h1>
-  <!-- Burbuja del Total Balance -->
-    <div id="balanceBubble" style="display:none;">Total Balance: $0</div>
-    <!-- Filter by COMPANY.CODE2 -->
-    <div id="filterBox">
-      <label for="companyFilter"><b>Filter by Company Code:</b></label>
-      <select id="companyFilter" onchange="applyCompanyFilter()">
-        <option value="">All</option>
-      </select>
     </div>
     <div id="bubblesContainer" style="margin-bottom:1.5rem; display:flex; gap:1rem; flex-wrap:wrap;"></div>
 
@@ -416,6 +416,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
