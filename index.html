@@ -390,7 +390,6 @@ function showData(rows){
       coverage = Math.abs(secondGroupTotalBalance) / overdueTotal;
     }
   
-
   // Función para renderizar tabla
   function renderTable(data, title){
     if(data.length === 0) return "";
@@ -459,15 +458,31 @@ function showData(rows){
     return acc + (isNaN(num) ? 0 : num);
   },0);
   
-
-  
-  // Renderizar burbujas en el orden solicitado
   const bubblesContainer = document.getElementById("bubblesContainer");
   bubblesContainer.innerHTML = `
-    ${renderBalanceBubble(totalFirstBalance,"Total Balance (Bounced Cheque, Invoice, Debit Note, Refund)")}
-    <div class="info-bubble" style="background:#f7212e;">Total Overdue: $${overdueTotal.toLocaleString()}</div>
-    ${renderBalanceBubble(totalSecondBalance,"Total Balance (Payment, Credit Note, Transfer)")}
-    <div class="info-bubble">Coverage to overdue (Payment / Overdue): ${(coverage * 100).toFixed(2)}%</div>
+    <h2 style="color:#0600b6; margin-top:1rem;">Summary</h2>
+    <table style="width:auto; border-collapse:collapse; margin-top:0.5rem; font-family:'Outfit',sans-serif; font-size:1rem;">
+      <tr>
+        <th style="background:#0600b6; color:white; padding:6px 12px; text-align:left;">Metric</th>
+        <th style="background:#0600b6; color:white; padding:6px 12px; text-align:right;">Value</th>
+      </tr>
+      <tr>
+        <td style="padding:6px 12px;">Total Balance (Bounced Cheque, Invoice, Debit Note, Refund)</td>
+        <td style="padding:6px 12px; text-align:right;">$${totalFirstBalance.toLocaleString()}</td>
+      </tr>
+      <tr>
+        <td style="padding:6px 12px; font-weight:bold; color:#f7212e;">Total Overdue</td>
+        <td style="padding:6px 12px; text-align:right; font-weight:bold; color:#f7212e;">$${overdueTotal.toLocaleString()}</td>
+      </tr>
+      <tr>
+        <td style="padding:6px 12px;">Total Balance (Payment, Credit Note, Transfer)</td>
+        <td style="padding:6px 12px; text-align:right;">$${totalSecondBalance.toLocaleString()}</td>
+      </tr>
+      <tr>
+        <td style="padding:6px 12px;">Coverage to overdue (Payment / Overdue)</td>
+        <td style="padding:6px 12px; text-align:right;">${(coverage * 100).toFixed(2)}%</td>
+      </tr>
+    </table>
   `;
 
   // Renderizar tablas debajo
@@ -541,6 +556,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
