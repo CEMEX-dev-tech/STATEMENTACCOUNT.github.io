@@ -51,7 +51,7 @@
       width: 100%;
       border-collapse: collapse;
       margin-top: 1rem;
-      font-size: 1.5rem;
+      font-size: 1rem;
     }
     th, td {
       border: 1px solid #ddd;
@@ -95,6 +95,7 @@
       display: flex;
       gap: 3px;   /* 👉 separación exacta de 3px */
       flex-wrap: wrap;
+      font-size: 1.5rem;
     }
 
     #legendContainer {
@@ -163,6 +164,11 @@
     <div id="bubblesContainer" style="margin-bottom:1.5rem; display:flex; gap:1rem; flex-wrap:wrap;"></div>
 
     <div id="tableContainer">Loading data...</div>
+    <div class="footer-msg">
+      In order to facilitate its review of the statement with group companies Cemex, 
+      then relate the bills that appear in our system, outstanding for the due dates indicated.
+    </div>
+    
     <button onclick="goBack()">Log Out</button>
     <button onclick="exportPDF()">Export to PDF</button>
     </div>
@@ -258,7 +264,7 @@ function renderBalanceBubble(total, title){
       padding:10px 20px;
       border-radius:25px;
       font-weight:bold;
-      font-size:2rem;
+      font-size:1.5rem;
       margin:1rem 0;
       font-family:'Outfit', sans-serif;">
       ${title}: $${total.toLocaleString()}
@@ -275,7 +281,7 @@ function renderInfoBubble(label, value){
       padding:10px 20px;
       border-radius:25px;
       font-weight:bold;
-      font-size:2rem;
+      font-size:1.5rem;
       margin:0.5rem;
       font-family:'Outfit', sans-serif;">
       ${label}: ${value}
@@ -478,6 +484,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
