@@ -5,6 +5,9 @@
   <title>Account Statement Viewer</title>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
   <style>
     body {
       font-family: 'Outfit', sans-serif; /* 👉 Outfit en toda la página */
@@ -108,6 +111,7 @@
 
     <div id="tableContainer">Loading data...</div>
     <button onclick="goBack()">Log Out</button>
+    <button onclick="exportPDF()">Export to PDF</button>
     </div>
     
 <script>
@@ -268,6 +272,28 @@
     bubble.textContent = `Total Balance: $${totalBalanceValue.toLocaleString()}`;
     bubble.style.display = "inline-block";
   }
+async function exportPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({
+    orientation: "landscape",  // horizontal para tablas largas
+    unit: "pt",
+    format: "a4"
+  });
+
+  // Obtener el HTML de la tabla
+  const table = document.querySelector("#tableContainer table");
+
+  if (!table) {
+    alert("No data available to export.");
+    return;
+  }
+
+  // Convertir tabla a PDF usando autoTable
+  doc.autoTable({ html: table });
+
+  // Guardar PDF
+  doc.save("Account_Statement.pdf");
+}
 
   function goBack(){
     document.getElementById("dataScreen").classList.remove("active");
@@ -278,6 +304,7 @@
 </script>
 </body>
 </html>
+
 
 
 
