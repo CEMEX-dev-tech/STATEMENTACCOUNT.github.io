@@ -134,7 +134,32 @@
       border-top: 1px solid #ccc;
       font-family: 'Outfit', sans-serif; /* 👉 Outfit aplicada */
     }
+    /* Contenedor responsivo */
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;   /* 👉 habilita scroll horizontal si la tabla no cabe */
+      -webkit-overflow-scrolling: touch; /* 👉 hace el scroll más suave en móviles */
+      margin-top: 1rem;
+      border-radius: 8px;
+    }
     
+    /* Ajustar tabla para ocupar el 100% del ancho */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    
+    /* Para pantallas pequeñas */
+    @media screen and (max-width: 768px) {
+      table {
+        font-size: 0.75rem; /* 👉 letras más pequeñas */
+      }
+      th, td {
+        padding: 4px; /* 👉 celdas más compactas */
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -383,6 +408,7 @@ function showData(rows){
     totalColumns.forEach(c => totals[c] = 0);
 
     let html = `<h2 style="margin-top:2rem; color:#0600b6;">${title}</h2>`;
+    html += `<div class="table-wrapper">`;
     html += "<table><thead><tr>";
     selectedColumns.forEach(c => { html += `<th>${c}</th>`; });
     html += "</tr></thead><tbody>";
@@ -425,6 +451,7 @@ function showData(rows){
       }
     });
     html += "</tr></tfoot></table>";
+    html += `</div>`;  // 👈 cerrar table-wrapper
 
     return html;
   }
@@ -519,6 +546,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
