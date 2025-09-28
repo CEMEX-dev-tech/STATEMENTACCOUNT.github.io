@@ -6,6 +6,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     body {
       font-family: 'Outfit', sans-serif; /* 👉 Outfit en toda la página */
@@ -418,29 +419,56 @@ function showData(rows){
   container.innerHTML += renderTable(secondGroup,"Documents: Payment, Credit Note, Transfer");
 }
   
-function exportPDF() {
+async function exportPDF() {
+  // Seguridad: verificar que jsPDF esté cargado
+  if (!window.jspdf || !window.jspdf.jsPDF) {
+    alert("jsPDF no está cargado. Revisa la etiqueta <script> de jsPDF.");
+    return;
+  }
+
+  // Esperar a que las fuentes (Outfit) estén listas para que el render sea idéntico
+  if (document.fonts && document.fonts.ready) {
+    try { await document.fonts.ready; } catch(e) {}
+  }
+
   const { jsPDF } = window.jspdf;
+  const node = document.getElementById("dataScreen");
 
-  // Selecciona el contenedor de todo lo que quieres exportar
-  const element = document.getElementById("dataScreen");
-
-  html2canvas(element, {
-    scale: 2, // mejor resolución
-    useCORS: true
-  }).then(canvas => {
-    const imgData = canvas.toDataURL("image/png");
-    const pdf = new jsPDF("l", "pt", "a4"); // landscape (horizontal), puntos
-    const imgProps = pdf.getImageProperties(imgData);
-
-    // Ajustar imagen al ancho del PDF
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-    pdf.save("Account_Statement.pdf");
+  // Capturar la vista tal cual
+  const canvas = await html2canvas(node, {
+    scale: 2,             // mayor resolución
+    useCORS: true,
+    backgroundColor: "#ffffff",
+    scrollX: 0,
+    scrollY: -window.scrollY
   });
-}
 
+  const imgData = canvas.toDataURL("image/png");
+  const pdf = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
+
+  // Ajustar al ancho del PDF y paginar si es más alto
+  const pdfW = pdf.internal.pageSize.getWidth();
+  const pdfH = pdf.internal.pageSize.getHeight();
+
+  const imgW = pdfW;
+  const imgH = canvas.height * (imgW / canvas.width);
+
+  let heightLeft = imgH;
+  let position = 0;
+
+  pdf.addImage(imgData, "PNG", 0, position, imgW, imgH);
+  heightLeft -= pdfH;
+
+  while (heightLeft > 0) {
+    position = heightLeft - imgH; // desplazamiento negativo para “cortar” la imagen
+    pdf.addPage();
+    pdf.addImage(imgData, "PNG", 0, position, imgW, imgH);
+    heightLeft -= pdfH;
+  }
+
+  pdf.save("Account_Statement.pdf");
+}
+  
 function goBack(){
     document.getElementById("dataScreen").classList.remove("active");
     document.getElementById("loginScreen").classList.add("active");
@@ -450,6 +478,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
