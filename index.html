@@ -80,7 +80,7 @@
       border-radius: 25px;
       font-weight: bold;
       font-size: 1rem;
-      margin-bottom: 1rem;
+      margin-bottom: 0rem;
       gap: 3px;
       flex-wrap: wrap;
     }
@@ -299,7 +299,7 @@ function showData(rows){
   infoContainer.innerHTML = `
     ${renderInfoBubble("Customer", customerName)}
     ${renderInfoBubble("Customer Code", customerId)}
-    ${renderInfoBubble("Credit Limit", "$"+creditLimit.toLocaleString())}
+    ${renderInfoBubble("Credit Limit", "$"+Number(creditLimit).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }))}
   `;
   // Categorías de documentos
   const firstGroupDocs = ["Bounced Cheque","Invoice","Debit Note","Invoice I. L","Refund"];
@@ -493,6 +493,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
