@@ -248,16 +248,25 @@ function renderInfoBubble(label, value){
   `;
 }
 
-
 function showData(rows){
   const container = document.getElementById("tableContainer");
   container.innerHTML = ""; // limpiar antes
-
+  
   if(rows.length === 0){
     container.innerHTML = "<p>No data available for this Customer.</p>";
     return;
   }
+  const customerName = rows[0]["CUSTOMER NAME"] || "N/A";
+  const customerId = rows[0]["CUSTOMER"] || "N/A";
+  const creditLimit = rows[0]["CREDIT LIMIT"] || "0";
 
+  // 👉 Renderizas las 3 burbujas arriba
+  const infoContainer = document.getElementById("infoBubbles");
+  infoContainer.innerHTML = `
+    ${renderInfoBubble("Customer", customerName)}
+    ${renderInfoBubble("Customer Code", customerId)}
+    ${renderInfoBubble("Credit Limit", "$"+creditLimit.toLocaleString())}
+  `;
   // Categorías de documentos
   const firstGroupDocs = ["Bounced Cheque","Invoice","Debit Note","Invoice I. L","Refund"];
   const secondGroupDocs = ["Payment","Credit Note","Transfer"];
@@ -344,19 +353,6 @@ function showData(rows){
   container.innerHTML += renderTable(firstGroup,"Documents: Bounced Cheque, Invoice, Debit Note, Refund");
   container.innerHTML += renderTable(secondGroup,"Documents: Payment, Credit Note, Transfer");
 }
-// Extraer info del cliente del primer registro
-const customerName = rows[0]["CUSTOMER NAME"] || "N/A";
-const customerId = rows[0]["CUSTOMER"] || "N/A";
-const creditLimit = rows[0]["CREDIT LIMIT"] || "0";
-
-// Renderizar las 3 burbujas arriba
-const infoContainer = document.getElementById("infoBubbles");
-infoContainer.innerHTML = `
-  ${renderInfoBubble("Customer", customerName)}
-  ${renderInfoBubble("Customer Code", customerId)}
-  ${renderInfoBubble("Credit Limit", "$"+creditLimit.toLocaleString())}
-`;
-
   
 async function exportPDF() {
   const { jsPDF } = window.jspdf;
@@ -448,6 +444,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
