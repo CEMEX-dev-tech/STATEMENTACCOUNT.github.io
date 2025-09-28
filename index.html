@@ -272,12 +272,13 @@
     bubble.textContent = `Total Balance: $${totalBalanceValue.toLocaleString()}`;
     bubble.style.display = "inline-block";
   }
+  
 async function exportPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({
     orientation: "landscape",
     unit: "pt",
-    format: "a2"   // 📌 mucho más grande que A4
+    format: "a2"   // más grande que A4
   });
 
   // Título
@@ -327,18 +328,19 @@ async function exportPDF() {
       valign: "middle"
     },
     didParseCell: function (data) {
-      // 📌 Semáforo en columna DAYS OVERDUE TO DATE
-      if (data.section === "body" && data.column.index === 7) {
-        let val = parseFloat((data.cell.raw || "").toString().replace(/,/g, ""));
+      // 📌 Detectar la columna DAYS OVERDUE TO DATE
+      const columnTitle = data.table.head[0].cells[data.column.index].text[0];
+      if (data.section === "body" && columnTitle.toUpperCase().includes("DAYS OVERDUE")) {
+        let val = parseFloat((data.cell.text[0] || "").toString().replace(/,/g, ""));
         if (!isNaN(val)) {
           if (val < 0) {
-            data.cell.styles.textColor = [0, 128, 0]; // verde
+            data.cell.styles.textColor = [0, 128, 0]; // Verde
             data.cell.styles.fontStyle = "bold";
           } else if (val >= 0 && val <= 1) {
-            data.cell.styles.textColor = [255, 165, 0]; // naranja
+            data.cell.styles.textColor = [255, 165, 0]; // Amarillo/Naranja
             data.cell.styles.fontStyle = "bold";
           } else if (val > 1) {
-            data.cell.styles.textColor = [255, 0, 0]; // rojo
+            data.cell.styles.textColor = [255, 0, 0]; // Rojo
             data.cell.styles.fontStyle = "bold";
           }
         }
@@ -351,6 +353,7 @@ async function exportPDF() {
 
 
 
+
 function goBack(){
     document.getElementById("dataScreen").classList.remove("active");
     document.getElementById("loginScreen").classList.add("active");
@@ -360,6 +363,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
