@@ -275,27 +275,73 @@
 async function exportPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({
-    orientation: "landscape",  // horizontal para tablas largas
+    orientation: "landscape",
     unit: "pt",
     format: "a4"
   });
 
-  // Obtener el HTML de la tabla
-  const table = document.querySelector("#tableContainer table");
+  // Título
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(14);
+  doc.text("Account Statement", 40, 30);
 
+  // Fecha
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("Generated: " + new Date().toLocaleDateString(), 700, 30);
+
+  // Extraer cabecera y cuerpo de la tabla
+  const table = document.querySelector("#tableContainer table");
   if (!table) {
     alert("No data available to export.");
     return;
   }
 
-  // Convertir tabla a PDF usando autoTable
-  doc.autoTable({ html: table });
+  doc.autoTable({
+    html: table,
+    startY: 50,
+    theme: "grid",
+    headStyles: {
+      fillColor: [6, 0, 182],   // Azul #0600b6
+      textColor: [255, 255, 255],
+      fontStyle: "bold",
+      halign: "center"
+    },
+    bodyStyles: {
+      textColor: [0, 0, 0],
+      fontSize: 8
+    },
+    footStyles: {
+      fillColor: [230, 230, 230], // gris claro
+      textColor: [0, 0, 0],
+      fontStyle: "bold"
+    },
+    styles: {
+      font: "helvetica",
+      lineColor: [220, 220, 220],
+      lineWidth: 0.5,
+    },
+    didParseCell: function (data) {
+      if (data.section === "body" && data.column && data.column.raw === "DAYS OVERDUE TO DATE") {
+        let val = parseFloat(data.cell.raw.toString().replace(/,/g,"")) || 0;
+        if (val < 0) {
+          data.cell.styles.textColor = [0, 128, 0]; // Verde
+          data.cell.styles.fontStyle = "bold";
+        } else if (val >= 0 && val <= 1) {
+          data.cell.styles.textColor = [255, 165, 0]; // Naranja
+          data.cell.styles.fontStyle = "bold";
+        } else if (val > 1) {
+          data.cell.styles.textColor = [255, 0, 0]; // Rojo
+          data.cell.styles.fontStyle = "bold";
+        }
+      }
+    }
+  });
 
-  // Guardar PDF
   doc.save("Account_Statement.pdf");
 }
 
-  function goBack(){
+function goBack(){
     document.getElementById("dataScreen").classList.remove("active");
     document.getElementById("loginScreen").classList.add("active");
     document.getElementById("passwordInput").value = "";
@@ -304,6 +350,7 @@ async function exportPDF() {
 </script>
 </body>
 </html>
+
 
 
 
