@@ -196,67 +196,80 @@
     showData(filtered);
   }
 
-  function showData(rows){
-    const container = document.getElementById("tableContainer");
-    container.innerHTML = ""; // limpiar antes
-  
-    if(rows.length === 0){
-      container.innerHTML = "<p>No data available for this Customer.</p>";
-      return;
-    }
-  
-    // Categorías de documentos
-    const firstGroupDocs = ["Bounced Cheque","Invoice","Debit Note","Invoice I. L","Refund"];
-    const secondGroupDocs = ["Payment","Credit Note","Transfer"];
-  
-    // Separar registros
-    const firstGroup = rows.filter(r => firstGroupDocs.includes((r["DESCRIPTION DOCUMENT"]||"").trim()));
-    const secondGroup = rows.filter(r => secondGroupDocs.includes((r["DESCRIPTION DOCUMENT"]||"").trim()));
-  
-    // Función para renderizar tabla
-    function renderTable(data, title){
-      if(data.length === 0) return "";
-  
-      let totals = {};
-      totalColumns.forEach(c => totals[c] = 0);
-  
-      let html = `<h2 style="margin-top:2rem; color:#0600b6;">${title}</h2>`;
-      html += "<table><thead><tr>";
-      selectedColumns.forEach(c => { html += `<th>${c}</th>`; });
-      html += "</tr></thead><tbody>";
-  
-      data.forEach(r => {
-        html += "<tr>";
-        selectedColumns.forEach(c => {
-          let value = r[c] ?? "";
-          if(totalColumns.includes(c) && value){
-            let num = parseFloat(value.toString().replace(/,/g,""));
-            if(!isNaN(num)) totals[c] += num;
-          }
-          html += `<td>${value}</td>`;
-        });
-        html += "</tr>";
-      });
-  
-      // Totals row
-      html += "</tbody><tfoot><tr>";
+function showData(rows){
+  const container = document.getElementById("tableContainer");
+  container.innerHTML = ""; // limpiar antes
+
+  if(rows.length === 0){
+    container.innerHTML = "<p>No data available for this Customer.</p>";
+    return;
+  }
+
+  // Categorías de documentos
+  const firstGroupDocs = ["Bounced Cheque","Invoice","Debit Note","Invoice I. L","Refund"];
+  const secondGroupDocs = ["Payment","Credit Note","Transfer"];
+
+  // Separar registros
+  const firstGroup = rows.filter(r => firstGroupDocs.includes((r["DESCRIPTION DOCUMENT"]||"").trim()));
+  const secondGroup = rows.filter(r => secondGroupDocs.includes((r["DESCRIPTION DOCUMENT"]||"").trim()));
+
+  // Función para renderizar tabla
+  function renderTable(data, title){
+    if(data.length === 0) return "";
+
+    let totals = {};
+    totalColumns.forEach(c => totals[c] = 0);
+
+    let html = `<h2 style="margin-top:2rem; color:#0600b6;">${title}</h2>`;
+    html += "<table><thead><tr>";
+    selectedColumns.forEach(c => { html += `<th>${c}</th>`; });
+    html += "</tr></thead><tbody>";
+
+    data.forEach(r => {
+      html += "<tr>";
       selectedColumns.forEach(c => {
-        if(totalColumns.includes(c)){
-          html += `<td>${totals[c] ? totals[c].toLocaleString() : "0"}</td>`;
-        } else if(c === selectedColumns[0]){
-          html += "<td><b>Totals</b></td>";
+        let value = r[c] ?? "";
+
+        // Acumular totales
+        if(totalColumns.includes(c) && value){
+          let num = parseFloat(value.toString().replace(/,/g,""));
+          if(!isNaN(num)) totals[c] += num;
+        }
+
+        // 🚦 Semáforo en la columna DAYS OVERDUE TO DATE
+        if(c === "DAYS OVERDUE TO DATE" && value !== ""){
+          let num = parseFloat(value);
+          let color = "black";
+          if(num < 0) color = "green";
+          else if(num === 0) color = "orange";
+          else if(num > 0) color = "red";
+          html += `<td style="color:${color}; font-weight:bold;">${value}</td>`;
         } else {
-          html += "<td></td>";
+          html += `<td>${value}</td>`;
         }
       });
-      html += "</tr></tfoot></table>";
-  
-      return html;
-    }
-  
-    // Renderizar ambas tablas en orden
-    container.innerHTML += renderTable(firstGroup,"Documents: Bounced Cheque, Invoice, Debit Note, Invoice I. L, Refund");
-    container.innerHTML += renderTable(secondGroup,"Documents: Payment, Credit Note, Transfer");
+      html += "</tr>";
+    });
+
+    // Totals row
+    html += "</tbody><tfoot><tr>";
+    selectedColumns.forEach(c => {
+      if(totalColumns.includes(c)){
+        html += `<td>${totals[c] ? totals[c].toLocaleString() : "0"}</td>`;
+      } else if(c === selectedColumns[0]){
+        html += "<td><b>Totals</b></td>";
+      } else {
+        html += "<td></td>";
+      }
+    });
+    html += "</tr></tfoot></table>";
+
+    return html;
+  }
+
+  // Renderizar ambas tablas en orden
+  container.innerHTML += renderTable(firstGroup,"Documents: Bounced Cheque, Invoice, Debit Note, Invoice I. L, Refund");
+  container.innerHTML += renderTable(secondGroup,"Documents: Payment, Credit Note, Transfer");
 }
 
   
@@ -350,6 +363,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
