@@ -297,10 +297,10 @@ function showData(rows){
   
   // Render con burbuja + tabla
   container.innerHTML += renderTable(firstGroup,"Documents: Bounced Cheque, Invoice, Debit Note, Refund");
-  container.innerHTML += renderBalanceBubble(totalFirstBalance,"Total Balance (Group 1)");
+  container.innerHTML += renderBalanceBubble(totalFirstBalance,"Total Balance (bounced Cheque, Invoice, Debit Note, Refund)");
     
   container.innerHTML += renderTable(secondGroup,"Documents: Payment, Credit Note, Transfers");
-  container.innerHTML += renderBalanceBubble(totalSecondBalance,"Total Balance (Group 2)");
+  container.innerHTML += renderBalanceBubble(totalSecondBalance,"Total Balance (Payment, Credit Note, Transfers)");
 }
 
   
@@ -394,6 +394,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
