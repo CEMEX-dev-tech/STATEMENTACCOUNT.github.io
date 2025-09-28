@@ -200,9 +200,9 @@
     </div>
     
     <!-- 👇 Aquí van las burbujas de métricas -->
-    <div id="overdueBubble" class="info-bubble" style="display:none;"></div>
-    <div id="coverageBubble" class="info-bubble" style="display:none;"></div>
+    <div id="overdueBubble" class="info-bubble" style="display:none;"></div>    
     <div id="bubblesContainer" style="margin-bottom:1.5rem; display:flex; gap:1rem; flex-wrap:wrap;"></div>
+    <div id="coverageBubble" class="info-bubble" style="display:none;"></div>
 
     <div id="tableContainer">Loading data...</div>
     <div style="
@@ -390,15 +390,6 @@ function showData(rows){
       coverage = Math.abs(secondGroupTotalBalance) / overdueTotal;
     }
   
-    // 👉 Mostrar burbuja de cobertura
-  const coverageBubble = document.getElementById("coverageBubble");
-  coverageBubble.textContent = `Coverage to overdue (Payment / Overdue): ${(coverage * 100).toFixed(2)}%`;
-  coverageBubble.style.display = "inline-block";
-  // 👉 Mostrar burbuja del total de vencidos
-  const overdueBubble = document.getElementById("overdueBubble");
-  overdueBubble.textContent = `Total Overdue: $${overdueTotal.toLocaleString()}`;
-  overdueBubble.style.display = "inline-block";
-
 
   // Función para renderizar tabla
   function renderTable(data, title){
@@ -468,13 +459,17 @@ function showData(rows){
     return acc + (isNaN(num) ? 0 : num);
   },0);
   
-// Renderizar burbujas arriba
+
+  
+  // Renderizar burbujas en el orden solicitado
   const bubblesContainer = document.getElementById("bubblesContainer");
   bubblesContainer.innerHTML = `
     ${renderBalanceBubble(totalFirstBalance,"Total Balance (Bounced Cheque, Invoice, Debit Note, Refund)")}
+    <div class="info-bubble" style="background:#f7212e;">Total Overdue: $${overdueTotal.toLocaleString()}</div>
     ${renderBalanceBubble(totalSecondBalance,"Total Balance (Payment, Credit Note, Transfer)")}
+    <div class="info-bubble">Coverage to overdue (Payment / Overdue): ${(coverage * 100).toFixed(2)}%</div>
   `;
-  
+
   // Renderizar tablas debajo
   container.innerHTML = "";
   container.innerHTML += renderTable(firstGroup,"Documents: Bounced Cheque, Invoice, Debit Note, Refund");
@@ -546,6 +541,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
