@@ -73,7 +73,7 @@
       border-radius: 8px;
     }
     #balanceBubble {
-      display: inline-block;
+      display: flex;
       background: #0600b6;
       color: white;
       padding: 10px 20px;
@@ -81,6 +81,8 @@
       font-weight: bold;
       font-size: 1rem;
       margin-bottom: 1rem;
+      gap: 3px;
+      flex-wrap: wrap;
     }
     #legendAndInfo {
       display: flex;
@@ -91,7 +93,7 @@
 
     #infoBubbles {
       display: flex;
-      gap: 0.8rem; /* espacio pequeño entre burbujas */
+      gap: 3px;   /* 👉 separación exacta de 3px */
       flex-wrap: wrap;
     }
 
@@ -464,6 +466,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
