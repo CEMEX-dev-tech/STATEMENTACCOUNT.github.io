@@ -205,6 +205,12 @@
 
     let totalBalanceValue = 0; // 👉 suma del Balance
 
+    rows.sort((a, b) => {
+      const valA = parseFloat((a["DAYS OVERDUE TO DATE"] || "0").toString().replace(/,/g,"")) || 0;
+      const valB = parseFloat((b["DAYS OVERDUE TO DATE"] || "0").toString().replace(/,/g,"")) || 0;
+      return valB - valA; // mayor a menor
+    });
+
     let html = "<table><thead><tr>";
     selectedColumns.forEach(c => { html += `<th>${c}</th>`; });
     html += "</tr></thead><tbody>";
@@ -256,6 +262,7 @@
 </script>
 </body>
 </html>
+
 
 
 
