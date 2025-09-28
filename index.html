@@ -284,6 +284,27 @@ function showData(rows){
 
     return html;
   }
+  function sortByDaysOverdue(rows){
+    return rows.sort((a,b) => {
+      const valA = parseFloat((a["DAYS OVERDUE TO DATE"]||"0").toString().replace(/,/g,"")) || 0;
+      const valB = parseFloat((b["DAYS OVERDUE TO DATE"]||"0").toString().replace(/,/g,"")) || 0;
+      return valB - valA; // mayor a menor
+    });
+  }
+  
+  // Dentro de tu función principal donde filtras y separas
+  let firstGroup = rows.filter(r => 
+    ["Bounced Cheque","Invoice","Debit Note","Refund"].includes(r["DESCRIPTION DOCUMENT"])
+  );
+  
+  let secondGroup = rows.filter(r => 
+    ["Payment","Credit Note","Transfer"].includes(r["DESCRIPTION DOCUMENT"])
+  );
+
+// Ordenamos cada grupo
+  firstGroup = sortByDaysOverdue(firstGroup);
+  secondGroup = sortByDaysOverdue(secondGroup);
+    
 // Total del Balance del primer grupo
   let totalFirstBalance = firstGroup.reduce((acc, row) => {
     let num = parseFloat((row["BALANCE"]||"0").toString().replace(/,/g,""));
@@ -400,6 +421,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
