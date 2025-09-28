@@ -7,7 +7,6 @@
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-
   <style>
     body {
       font-family: 'Outfit', sans-serif; /* 👉 Outfit en toda la página */
@@ -89,6 +88,22 @@
       gap: 1rem;                 /* espacio entre burbujas */
       justify-content: flex-start; /* alineación a la izquierda */
     }
+    #filterLegendWrapper {
+      display: flex;
+      justify-content: space-between; /* filtro a la izq, legend a la der */
+      align-items: center;            /* alinear verticalmente */
+      margin-bottom: 1rem;
+    }
+    #legendContainer {
+      text-align: right;
+    }
+    .legend-box {
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      margin-left: 6px;
+      margin-right: 6px;
+    }
   </style>
 </head>
 <body>
@@ -109,27 +124,20 @@
   <!-- Burbuja del Total Balance -->
     <div id="balanceBubble" style="display:none;">Total Balance: $0</div>
     <!-- Filter by COMPANY.CODE2 -->
-    <div id="filterBox">
-      <label for="companyFilter"><b>Filter by Company Code:</b></label>
-      <select id="companyFilter" onchange="applyCompanyFilter()">
-        <option value="">All</option>
-      </select>
-    </div>
-    <div id="legend" style="margin-top:10px; text-align:right; font-family:'Outfit', sans-serif; font-size:0.9rem;">
-      <div style="display:flex; align-items:center; justify-content:flex-end; margin-bottom:5px;">
-          <span style="margin-right:8px; font-weight:bold;">On-time invoices</span>
-          <div style="width:20px; height:20px; background:green; border:1px solid #000;"></div>
-      </div>
-      <div style="display:flex; align-items:center; justify-content:flex-end; margin-bottom:5px;">
-          <span style="margin-right:8px; font-weight:bold;">Upcoming invoices</span>
-          <div style="width:20px; height:20px; background:goldenrod; border:1px solid #000;"></div>
-      </div>
-        <div style="display:flex; align-items:center; justify-content:flex-end;">
-          <span style="margin-right:8px; font-weight:bold;">Overdue invoices</span>
-          <div style="width:20px; height:20px; background:darkred; border:1px solid #000;"></div>
+    <div id="filterLegendWrapper">
+      <div id="filterBox">
+        <label for="companyFilter"><b>Filter by Company Code:</b></label>
+        <select id="companyFilter" onchange="applyCompanyFilter()">
+          <option value="">All</option>
+        </select>
+      </div>    
+      <div id="legendContainer">
+        <div><span class="legend-box" style="background:green;"></span> On-time invoices</div>
+        <div><span class="legend-box" style="background:orange;"></span> Upcoming invoices</div>
+        <div><span class="legend-box" style="background:red;"></span> Overdue invoices</div>
       </div>
     </div>
-    
+  
     <div id="infoBubbles"></div>
     <div id="bubblesContainer" style="margin-bottom:1.5rem; display:flex; gap:1rem; flex-wrap:wrap;"></div>
 
@@ -450,6 +458,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
