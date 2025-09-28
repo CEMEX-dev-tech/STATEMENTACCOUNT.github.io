@@ -82,28 +82,32 @@
       font-size: 1rem;
       margin-bottom: 1rem;
     }
-    #infoBubbles {
-      margin: 0.2rem 0 0.8rem 0;   /* menos margen arriba */
-      display: flex;             /* las coloca en fila */
-      gap: 1rem;                 /* espacio entre burbujas */
-      justify-content: flex-start; /* alineación a la izquierda */
-    }
-    #filterLegendWrapper {
+    #legendAndInfo {
       display: flex;
-      justify-content: space-between; /* filtro a la izq, legend a la der */
-      align-items: center;            /* alinear verticalmente */
-      margin-bottom: 1rem;
+      align-items: center;
+      justify-content: flex-start;
+      margin: 0.5rem 0 1rem 0; /* más pegado */
+      gap: 2rem; /* espacio entre legend y burbujas */
     }
+
     #legendContainer {
-      text-align: right;
+      font-size: 0.9rem;
+      line-height: 1.5;
     }
+
     .legend-box {
       display: inline-block;
-      width: 15px;
-      height: 15px;
-      margin-left: 6px;
+      width: 14px;
+      height: 14px;
       margin-right: 6px;
     }
+
+    #infoBubbles {
+      display: flex;
+      gap: 0.8rem; /* 👉 menos separación entre burbujas */
+      flex-wrap: wrap;
+    }
+
   </style>
 </head>
 <body>
@@ -131,15 +135,15 @@
         <option value="">All</option>
       </select>
     </div>    
-    <div id="filterLegendWrapper">
+    <div id="legendAndInfo">  
       <div id="legendContainer">
         <div><span class="legend-box" style="background:green;"></span> On-time invoices</div>
         <div><span class="legend-box" style="background:orange;"></span> Upcoming invoices</div>
         <div><span class="legend-box" style="background:red;"></span> Overdue invoices</div>
-      </div>
+      </div>         
+      <div id="infoBubbles"></div>
     </div>
-  
-    <div id="infoBubbles"></div>
+    
     <div id="bubblesContainer" style="margin-bottom:1.5rem; display:flex; gap:1rem; flex-wrap:wrap;"></div>
 
     <div id="tableContainer">Loading data...</div>
@@ -459,6 +463,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
