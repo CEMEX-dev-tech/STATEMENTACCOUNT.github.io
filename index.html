@@ -180,15 +180,7 @@
     <div id="bubblesContainer" style="margin-bottom:1.5rem; display:flex; gap:1rem; flex-wrap:wrap;"></div>
 
     <div id="tableContainer">Loading data...</div>
-    <div class="footer-msg">
-      In order to facilitate its review of the statement with group companies Cemex, 
-      then relate the bills that appear in our system, outstanding for the due dates indicated.
-    </div>
-    
-    <button onclick="goBack()">Log Out</button>
-    <button onclick="exportPDF()">Export to PDF</button>
-    </div>
-    <footer style="
+    <div style="
       text-align:center; 
       font-family:'Outfit', sans-serif; 
       font-size:0.9rem; 
@@ -196,8 +188,19 @@
       margin-top:2rem; 
       padding:1rem; 
       border-top:1px solid #ddd;">
-      UPDATED TO DATE: <span id="currentDate"></span>
-    </footer>
+      
+      UPDATED TO DATE: <span id="currentDate"></span> 
+      &nbsp;|&nbsp; 
+      <span class="footer-msg">
+        In order to facilitate its review of the statement with group companies Cemex, 
+        then relate the bills that appear in our system, outstanding for the due dates indicated.
+      </span>
+    </div>
+    
+    <button onclick="goBack()">Log Out</button>
+    <button onclick="exportPDF()">Export to PDF</button>
+    </div>
+  
   
 <script>
   let csvData = []; 
@@ -516,6 +519,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
