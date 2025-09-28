@@ -288,9 +288,8 @@ async function exportPDF() {
   // Fecha
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  doc.text("Generated: " + new Date().toLocaleDateString(), 700, 30);
+  doc.text("Generated: " + new Date().toLocaleDateString(), 750, 30);
 
-  // Extraer cabecera y cuerpo de la tabla
   const table = document.querySelector("#tableContainer table");
   if (!table) {
     alert("No data available to export.");
@@ -302,17 +301,19 @@ async function exportPDF() {
     startY: 50,
     theme: "grid",
     headStyles: {
-      fillColor: [6, 0, 182],   // Azul #0600b6
+      fillColor: [6, 0, 182], // azul #0600b6
       textColor: [255, 255, 255],
       fontStyle: "bold",
-      halign: "center"
+      halign: "center",
+      valign: "middle"
     },
     bodyStyles: {
       textColor: [0, 0, 0],
-      fontSize: 8
+      fontSize: 8,
+      valign: "middle"
     },
     footStyles: {
-      fillColor: [230, 230, 230], // gris claro
+      fillColor: [230, 230, 230], // gris para totales
       textColor: [0, 0, 0],
       fontStyle: "bold"
     },
@@ -320,19 +321,41 @@ async function exportPDF() {
       font: "helvetica",
       lineColor: [220, 220, 220],
       lineWidth: 0.5,
+      halign: "center", // centrado
+      valign: "middle"
+    },
+    columnStyles: {
+      0: { cellWidth: 70 },   // Branch Account
+      1: { cellWidth: 90 },   // Name Branch
+      2: { cellWidth: 70 },   // Division
+      3: { cellWidth: 100 },  // Description Document
+      4: { cellWidth: 90 },   // # Document
+      5: { cellWidth: 70 },   // Issued Date
+      6: { cellWidth: 80 },   // Expiration Date
+      7: { cellWidth: 90 },   // Days overdue
+      8: { cellWidth: 80 },   // Amount
+      9: { cellWidth: 80 },   // Balance
+      10: { cellWidth: 60 },  // Currency
+      11: { cellWidth: 70 },  // Not Overdue
+      12: { cellWidth: 70 },  // 1 to 30 DD
+      13: { cellWidth: 70 },  // 31 to 60 DD
+      14: { cellWidth: 80 }   // > to 60 DD
     },
     didParseCell: function (data) {
-      if (data.section === "body" && data.column && data.column.raw === "DAYS OVERDUE TO DATE") {
-        let val = parseFloat(data.cell.raw.toString().replace(/,/g,"")) || 0;
-        if (val < 0) {
-          data.cell.styles.textColor = [0, 128, 0]; // Verde
-          data.cell.styles.fontStyle = "bold";
-        } else if (val >= 0 && val <= 1) {
-          data.cell.styles.textColor = [255, 165, 0]; // Naranja
-          data.cell.styles.fontStyle = "bold";
-        } else if (val > 1) {
-          data.cell.styles.textColor = [255, 0, 0]; // Rojo
-          data.cell.styles.fontStyle = "bold";
+      if (data.section === "body" && data.column.index === 7) { 
+        // columna 7 = DAYS OVERDUE TO DATE
+        let val = parseFloat((data.cell.raw || "").toString().replace(/,/g, ""));
+        if (!isNaN(val)) {
+          if (val < 0) {
+            data.cell.styles.textColor = [0, 128, 0]; // verde
+            data.cell.styles.fontStyle = "bold";
+          } else if (val >= 0 && val <= 1) {
+            data.cell.styles.textColor = [255, 165, 0]; // naranja
+            data.cell.styles.fontStyle = "bold";
+          } else if (val > 1) {
+            data.cell.styles.textColor = [255, 0, 0]; // rojo
+            data.cell.styles.fontStyle = "bold";
+          }
         }
       }
     }
@@ -340,6 +363,7 @@ async function exportPDF() {
 
   doc.save("Account_Statement.pdf");
 }
+
 
 function goBack(){
     document.getElementById("dataScreen").classList.remove("active");
@@ -350,6 +374,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
