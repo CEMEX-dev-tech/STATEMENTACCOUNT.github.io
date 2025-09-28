@@ -53,18 +53,25 @@
       margin-top: 1rem;
       font-size: 1rem;
     }
-    th, td {
+    th {
       border: 1px solid #ddd;
       padding: 6px;
+      font-size: 1.2rem; 
       text-align: left;
       white-space: nowrap;
       font-family: 'Outfit', sans-serif;
     }
     th { background: #0600b6; color: white; }
     tfoot td {
+      font-size: 1.2rem;     /* aún más grande en totales */
       font-weight: bold;
-      background: #f0f0f0;
+      background: #f9f9f9;
     }
+    td {
+      font-size: 1.2rem;   
+      padding: 10px 12px;  
+    }
+    
     #filterBox {
       margin-bottom: 1rem;
       padding: 1rem;
@@ -124,15 +131,7 @@
       margin: 3px;
     }
  
-    td {
-      font-size: 1.2rem;   
-      padding: 10px 12px;  
-    }
-    tfoot td {
-      font-size: 1.3rem;     /* aún más grande en totales */
-      font-weight: bold;
-      background: #f9f9f9;   /* fondo gris claro */
-    }
+
     .footer-msg {
       margin-top: 1.5rem;
       padding: 1rem;
@@ -575,6 +574,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
