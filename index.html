@@ -108,6 +108,7 @@
         <option value="">All</option>
       </select>
     </div>
+    <div id="bubblesContainer" style="margin-bottom:1.5rem; display:flex; gap:1rem; flex-wrap:wrap;"></div>
 
     <div id="tableContainer">Loading data...</div>
     <button onclick="goBack()">Log Out</button>
@@ -295,12 +296,17 @@ function showData(rows){
     return acc + (isNaN(num) ? 0 : num);
   },0);
   
-  // Render con burbuja + tabla
+// Renderizar burbujas arriba
+  const bubblesContainer = document.getElementById("bubblesContainer");
+  bubblesContainer.innerHTML = `
+    ${renderBalanceBubble(totalFirstBalance,"Total Balance (Bounced Cheque, Invoice, Debit Note, Refund)")}
+    ${renderBalanceBubble(totalSecondBalance,"Total Balance (Payment, Credit Note, Transfer)")}
+  `;
+  
+  // Renderizar tablas debajo
+  container.innerHTML = "";
   container.innerHTML += renderTable(firstGroup,"Documents: Bounced Cheque, Invoice, Debit Note, Refund");
-  container.innerHTML += renderBalanceBubble(totalFirstBalance,"Total Balance (bounced Cheque, Invoice, Debit Note, Refund)");
-    
-  container.innerHTML += renderTable(secondGroup,"Documents: Payment, Credit Note, Transfers");
-  container.innerHTML += renderBalanceBubble(totalSecondBalance,"Total Balance (Payment, Credit Note, Transfers)");
+  container.innerHTML += renderTable(secondGroup,"Documents: Payment, Credit Note, Transfer");
 }
 
   
@@ -394,6 +400,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
