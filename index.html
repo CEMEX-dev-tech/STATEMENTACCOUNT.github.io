@@ -5,8 +5,7 @@
   <title>Account Statement Viewer</title>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     body {
       font-family: 'Outfit', sans-serif; /* 👉 Outfit en toda la página */
@@ -419,86 +418,28 @@ function showData(rows){
   container.innerHTML += renderTable(secondGroup,"Documents: Payment, Credit Note, Transfer");
 }
   
-async function exportPDF() {
+function exportPDF() {
   const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({
-    orientation: "landscape",
-    unit: "pt",
-    format: "a2"   // más grande que A4
+
+  // Selecciona el contenedor de todo lo que quieres exportar
+  const element = document.getElementById("dataScreen");
+
+  html2canvas(element, {
+    scale: 2, // mejor resolución
+    useCORS: true
+  }).then(canvas => {
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("l", "pt", "a4"); // landscape (horizontal), puntos
+    const imgProps = pdf.getImageProperties(imgData);
+
+    // Ajustar imagen al ancho del PDF
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+    pdf.save("Account_Statement.pdf");
   });
-
-  // Título
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(20);
-  doc.text("Account Statement", 50, 40);
-
-  // Fecha
-  doc.setFontSize(12);
-  doc.setFont("helvetica", "normal");
-  doc.text("Generated: " + new Date().toLocaleDateString(), doc.internal.pageSize.getWidth() - 150, 40);
-
-  const table = document.querySelector("#tableContainer table");
-  if (!table) {
-    alert("No data available to export.");
-    return;
-  }
-
-  doc.autoTable({
-    html: table,
-    startY: 70,
-    theme: "grid",
-    headStyles: {
-      fillColor: [6, 0, 182], // azul #0600b6
-      textColor: [255, 255, 255],
-      fontStyle: "bold",
-      halign: "center",
-      valign: "middle",
-      fontSize: 10
-    },
-    bodyStyles: {
-      textColor: [0, 0, 0],
-      fontSize: 9,
-      valign: "middle"
-    },
-    footStyles: {
-      fillColor: [230, 230, 230],
-      textColor: [0, 0, 0],
-      fontStyle: "bold",
-      fontSize: 10
-    },
-    styles: {
-      font: "helvetica",
-      lineColor: [220, 220, 220],
-      lineWidth: 0.5,
-      halign: "center",
-      valign: "middle"
-    },
-    didParseCell: function (data) {
-      // 📌 Detectar la columna DAYS OVERDUE TO DATE
-      const columnTitle = data.table.head[0].cells[data.column.index].text[0];
-      if (data.section === "body" && columnTitle.toUpperCase().includes("DAYS OVERDUE")) {
-        let val = parseFloat((data.cell.text[0] || "").toString().replace(/,/g, ""));
-        if (!isNaN(val)) {
-          if (val < 0) {
-            data.cell.styles.textColor = [0, 128, 0]; // Verde
-            data.cell.styles.fontStyle = "bold";
-          } else if (val >= 0 && val <= 1) {
-            data.cell.styles.textColor = [255, 165, 0]; // Amarillo/Naranja
-            data.cell.styles.fontStyle = "bold";
-          } else if (val > 1) {
-            data.cell.styles.textColor = [255, 0, 0]; // Rojo
-            data.cell.styles.fontStyle = "bold";
-          }
-        }
-      }
-    }
-  });
-
-  doc.save("Account_Statement.pdf");
 }
-
-
-
 
 function goBack(){
     document.getElementById("dataScreen").classList.remove("active");
@@ -509,6 +450,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
