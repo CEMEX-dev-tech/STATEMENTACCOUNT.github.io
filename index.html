@@ -85,14 +85,20 @@
     #legendAndInfo {
       display: flex;
       align-items: center;
-      justify-content: flex-start;
-      margin: 0.5rem 0 1rem 0; /* más pegado */
-      gap: 2rem; /* espacio entre legend y burbujas */
+      justify-content: space-between; /* 👉 Burbujas izquierda, legend derecha */
+      margin: 0.5rem 0 1rem 0;
+    }
+
+    #infoBubbles {
+      display: flex;
+      gap: 0.8rem; /* espacio pequeño entre burbujas */
+      flex-wrap: wrap;
     }
 
     #legendContainer {
       font-size: 0.9rem;
       line-height: 1.5;
+      text-align: right;
     }
 
     .legend-box {
@@ -100,12 +106,6 @@
       width: 14px;
       height: 14px;
       margin-right: 6px;
-    }
-
-    #infoBubbles {
-      display: flex;
-      gap: 0.8rem; /* 👉 menos separación entre burbujas */
-      flex-wrap: wrap;
     }
 
   </style>
@@ -136,12 +136,13 @@
       </select>
     </div>    
     <div id="legendAndInfo">  
+      <div id="infoBubbles"></div>
       <div id="legendContainer">
         <div><span class="legend-box" style="background:green;"></span> On-time invoices</div>
         <div><span class="legend-box" style="background:orange;"></span> Upcoming invoices</div>
         <div><span class="legend-box" style="background:red;"></span> Overdue invoices</div>
       </div>         
-      <div id="infoBubbles"></div>
+      
     </div>
     
     <div id="bubblesContainer" style="margin-bottom:1.5rem; display:flex; gap:1rem; flex-wrap:wrap;"></div>
@@ -463,6 +464,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
