@@ -155,10 +155,11 @@
         <div><span class="legend-box" style="background:orange;"></span> Upcoming invoices</div>
         <div><span class="legend-box" style="background:red;"></span> Overdue invoices</div>
       </div>         
-      
     </div>
     
+    <!-- 👇 Aquí van las burbujas de métricas -->
     <div id="overdueBubble" class="info-bubble" style="display:none;"></div>
+    <div id="coverageBubble" class="info-bubble" style="display:none;"></div>
     <div id="bubblesContainer" style="margin-bottom:1.5rem; display:flex; gap:1rem; flex-wrap:wrap;"></div>
 
     <div id="tableContainer">Loading data...</div>
@@ -317,7 +318,22 @@ function showData(rows){
       if (!isNaN(num)) overdueTotal += num;
     });
   });
-
+  let secondGroupTotalBalance = 0;
+    secondGroup.forEach(r => {
+      let val = parseFloat((r["BALANCE"]||"0").toString().replace(/,/g,""));
+      if(!isNaN(val)) secondGroupTotalBalance += val;
+    });
+  
+    // 👉 Calcular cobertura
+    let coverage = 0;
+    if (overdueTotal > 0) {
+      coverage = Math.abs(secondGroupTotalBalance) / overdueTotal;
+    }
+  
+    // 👉 Mostrar burbuja de cobertura
+  const coverageBubble = document.getElementById("coverageBubble");
+  coverageBubble.textContent = `Coverage: ${(coverage * 100).toFixed(2)}%`;
+  coverageBubble.style.display = "inline-block";
   // 👉 Mostrar burbuja del total de vencidos
   const overdueBubble = document.getElementById("overdueBubble");
   overdueBubble.textContent = `Total Overdue: $${overdueTotal.toLocaleString()}`;
@@ -493,6 +509,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
