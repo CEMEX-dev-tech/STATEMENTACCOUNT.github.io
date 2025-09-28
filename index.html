@@ -195,6 +195,23 @@
     }
     showData(filtered);
   }
+  
+function renderBalanceBubble(total, title){
+  return `
+    <div style="
+      display:inline-block;
+      background:#0600b6;
+      color:white;
+      padding:10px 20px;
+      border-radius:25px;
+      font-weight:bold;
+      font-size:1rem;
+      margin:1rem 0;
+      font-family:'Outfit', sans-serif;">
+      ${title}: $${total.toLocaleString()}
+    </div>
+  `;
+}
 
 function showData(rows){
   const container = document.getElementById("tableContainer");
@@ -266,10 +283,24 @@ function showData(rows){
 
     return html;
   }
-
-  // Renderizar ambas tablas en orden
+// Total del Balance del primer grupo
+  let totalFirstBalance = firstGroup.reduce((acc, row) => {
+    let num = parseFloat((row["BALANCE"]||"0").toString().replace(/,/g,""));
+    return acc + (isNaN(num) ? 0 : num);
+  },0);
+  
+  // Total del Balance del segundo grupo
+  let totalSecondBalance = secondGroup.reduce((acc, row) => {
+    let num = parseFloat((row["BALANCE"]||"0").toString().replace(/,/g,""));
+    return acc + (isNaN(num) ? 0 : num);
+  },0);
+  
+  // Render con burbuja + tabla
   container.innerHTML += renderTable(firstGroup,"Documents: Bounced Cheque, Invoice, Debit Note, Refund");
+  container.innerHTML += renderBalanceBubble(totalFirstBalance,"Total Balance (Group 1)");
+    
   container.innerHTML += renderTable(secondGroup,"Documents: Payment, Credit Note, Transfers");
+  container.innerHTML += renderBalanceBubble(totalSecondBalance,"Total Balance (Group 2)");
 }
 
   
@@ -363,6 +394,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
