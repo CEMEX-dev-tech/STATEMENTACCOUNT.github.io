@@ -332,7 +332,7 @@ function showData(rows){
   
     // 👉 Mostrar burbuja de cobertura
   const coverageBubble = document.getElementById("coverageBubble");
-  coverageBubble.textContent = `Coverage: ${(coverage * 100).toFixed(2)}%`;
+  coverageBubble.textContent = `Coverage to overdue (Payment / Overdue): ${(coverage * 100).toFixed(2)}%`;
   coverageBubble.style.display = "inline-block";
   // 👉 Mostrar burbuja del total de vencidos
   const overdueBubble = document.getElementById("overdueBubble");
@@ -509,6 +509,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
