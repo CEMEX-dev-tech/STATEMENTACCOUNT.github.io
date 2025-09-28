@@ -184,7 +184,27 @@
   <!-- Screen 2: Data View -->
   <div class="screen" id="dataScreen">
     <!-- Imagen arriba -->
-    <img src="Picture1.png" alt="Logo"style="max-width:1900px; margin:0 auto 10px auto; display:block;">
+    <div style="display:flex; align-items:center; justify-content:center; gap:20px; margin-bottom:10px;">
+  <!-- Logos -->
+    <img src="Picture1.png" alt="Logo" style="max-width:700px; display:block;">
+  
+    <!-- Mensaje animado -->
+    <div style="color:#0600b6; font-family:'Outfit', sans-serif; font-weight:bold; font-size:1.2rem; white-space:nowrap; animation:fadeBlink 2s infinite;">
+      Need assistance? Contact us: 
+      <a href="mailto:creditandcollection.tcl@cemex.com" style="color:#0600b6; text-decoration:none;">
+        creditandcollection.tcl@cemex.com
+      </a>
+    </div>
+  </div>
+
+<!-- Animación -->
+  <style>
+  @keyframes fadeBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  </style>
+   
 
   <!-- Legend -->
     <h1 style="text-align:center;">ACCOUNT STATEMENT</h1>
@@ -574,6 +594,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
