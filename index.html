@@ -123,7 +123,8 @@
           <div style="width:20px; height:20px; background:darkred; border:1px solid #000;"></div>
       </div>
     </div>
-  
+    
+    <div id="infoBubbles" style="margin:1rem 0; text-align:center;"></div>
     <div id="bubblesContainer" style="margin-bottom:1.5rem; display:flex; gap:1rem; flex-wrap:wrap;"></div>
 
     <div id="tableContainer">Loading data...</div>
@@ -229,6 +230,24 @@ function renderBalanceBubble(total, title){
     </div>
   `;
 }
+  
+function renderInfoBubble(label, value){
+  return `
+    <div style="
+      display:inline-block;
+      background:#0600b6;
+      color:white;
+      padding:10px 20px;
+      border-radius:25px;
+      font-weight:bold;
+      font-size:1rem;
+      margin:0.5rem;
+      font-family:'Outfit', sans-serif;">
+      ${label}: ${value}
+    </div>
+  `;
+}
+
 
 function showData(rows){
   const container = document.getElementById("tableContainer");
@@ -325,6 +344,18 @@ function showData(rows){
   container.innerHTML += renderTable(firstGroup,"Documents: Bounced Cheque, Invoice, Debit Note, Refund");
   container.innerHTML += renderTable(secondGroup,"Documents: Payment, Credit Note, Transfer");
 }
+// Extraer info del cliente del primer registro
+const customerName = rows[0]["CUSTOMER NAME"] || "N/A";
+const customerId = rows[0]["CUSTOMER"] || "N/A";
+const creditLimit = rows[0]["CREDIT LIMIT"] || "0";
+
+// Renderizar las 3 burbujas arriba
+const infoContainer = document.getElementById("infoBubbles");
+infoContainer.innerHTML = `
+  ${renderInfoBubble("Customer", customerName)}
+  ${renderInfoBubble("Customer Code", customerId)}
+  ${renderInfoBubble("Credit Limit", "$"+creditLimit.toLocaleString())}
+`;
 
   
 async function exportPDF() {
@@ -417,6 +448,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
