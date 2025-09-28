@@ -83,6 +83,12 @@
       font-size: 1rem;
       margin-bottom: 1rem;
     }
+    #infoBubbles {
+      margin: 0.2rem 0 0.8rem 0;   /* menos margen arriba */
+      display: flex;             /* las coloca en fila */
+      gap: 1rem;                 /* espacio entre burbujas */
+      justify-content: flex-start; /* alineación a la izquierda */
+    }
   </style>
 </head>
 <body>
@@ -124,7 +130,7 @@
       </div>
     </div>
     
-    <div id="infoBubbles" style="margin:1rem 0; text-align:center;"></div>
+    <div id="infoBubbles"></div>
     <div id="bubblesContainer" style="margin-bottom:1.5rem; display:flex; gap:1rem; flex-wrap:wrap;"></div>
 
     <div id="tableContainer">Loading data...</div>
@@ -444,6 +450,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
