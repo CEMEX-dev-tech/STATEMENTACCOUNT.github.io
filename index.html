@@ -176,34 +176,34 @@
 <body>
 
   <!-- Screen 1: Login -->
-  <div class="screen active" id="loginScreen" 
-       style="display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; min-height:100vh;">
+    <div class="screen active" id="loginScreen" 
+         style="display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; min-height:100vh;">
+      
+      <h1 style="font-size:3rem; color:#0600b6; text-align:center;">Welcome!</h1>
+      
+      <p style="font-size:2rem; text-align:center;">Please enter your password (Customer ID):</p>
     
-    <h1 style="font-size:3rem; color:#0600b6; text-align:center;">Welcome!</h1>
+      <input 
+        type="password" 
+        id="passwordInput" 
+        placeholder="Enter your Customer ID"
+        style="width:50%; height:50px; font-size:2rem; border:1px solid #ccc; border-radius:6px; margin-bottom:10px; box-sizing:border-box; font-family:'Outfit', sans-serif;"
+      >
     
-    <p style="font-size:2rem; text-align:center;">Please enter your password (Customer ID):</p>
+      <button 
+        onclick="checkPassword()" 
+        style="width:50%; height:50px; font-size:2rem; background:#0600b6; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:bold; font-family:'Outfit', sans-serif;"
+      >
+        Submit
+      </button>
+    
+      <p id="errorMsg" style="color:red; display:none; font-size:1.5rem; margin-top:10px;">
+        No records found for this Customer.
+      </p>
+    </div>
   
-    <input 
-      type="password" 
-      id="passwordInput" 
-      placeholder="Enter your Customer ID"
-      style="width:50%; height:50px; font-size:2rem; border:1px solid #ccc; border-radius:6px; margin-bottom:10px; box-sizing:border-box; font-family:'Outfit', sans-serif;"
-    >
-  
-    <button 
-      onclick="checkPassword()" 
-      style="width:50%; height:50px; font-size:2rem; background:#0600b6; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:bold; font-family:'Outfit', sans-serif;"
-    >
-      Submit
-    </button>
-  
-    <p id="errorMsg" style="color:red; display:none; font-size:1.5rem; margin-top:10px;">
-      No records found for this Customer.
-    </p>
-  </div>
-
-  <!-- Screen 2: Data View -->
-  <div class="screen" id="dataScreen">
+    <!-- Screen 2: Data View -->
+    <div class="screen" id="dataScreen">
     
     <img src="Picture11.png" alt="Logo"style="max-width:700px; display:block; margin:0 auto;">
   <!-- Legend -->
@@ -608,6 +608,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
