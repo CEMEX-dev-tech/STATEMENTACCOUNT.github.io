@@ -29,7 +29,7 @@
       box-sizing: border-box;
     }
 
-    .screen.active { display: block; }
+    .screen.active { display: flex; }
     h1 { color: #0600b6; margin-bottom: 1rem; }
     input[type="password"], button, select {
       padding: 10px;
@@ -174,13 +174,8 @@
   </style>
 </head>
 <body>
-
-  <!-- Screen 1: Login -->
-    <div class="screen active" id="loginScreen" 
-         style="display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; min-height:100vh;">
-      
+    <div class="screen active" id="loginScreen">
       <h1 style="font-size:3rem; color:#0600b6; text-align:center;">Welcome!</h1>
-      
       <p style="font-size:2rem; text-align:center;">Please enter your password (Customer ID):</p>
     
       <input 
@@ -201,6 +196,7 @@
         No records found for this Customer.
       </p>
     </div>
+
   
     <!-- Screen 2: Data View -->
     <div class="screen" id="dataScreen">
@@ -608,6 +604,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
