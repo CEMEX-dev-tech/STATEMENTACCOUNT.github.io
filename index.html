@@ -58,7 +58,7 @@
       cursor: pointer;
       border-radius: 8px;
       font-family: 'Outfit', sans-serif;
-      font-size: 1.2rem;    /* 👉 más grande el texto */
+      font-size: 1rem;    /* 👉 más grande el texto */
       font-weight: bold;
       padding: 14px 28px;   /* 👉 más grandes */
       margin: 10px;
@@ -206,12 +206,14 @@
 </head>
 <body>
   <div id="app"> 
-
     <!-- Screen 1: Login -->
     <div class="screen active" id="loginScreen">
       <h1 style="font-size:3rem; color:#0600b6; text-align:center;">Welcome!</h1>
       
-      <p style="font-size:2rem; text-align:center;">Enter your Customer ID:</p>
+      <p style="font-family:'Outfit', sans-serif; font-size:2rem; text-align:center;">
+        Enter your Customer ID:
+      </p>
+
       <input 
         type="password" 
         id="customerIdInput" 
@@ -690,6 +692,7 @@ function exportExcel() {
 </script>
 </body>
 </html>
+
 
 
 
