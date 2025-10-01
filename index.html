@@ -555,8 +555,8 @@ async function exportPDF() {
 
   // 👇 Clonar el nodo para exportar con ancho fijo
   const clone = node.cloneNode(true);
-  clone.style.width = "4000px";   // 📌 fuerza un ancho grande
-  clone.style.maxWidth = "4000px";
+  clone.style.width = "3000px";   // 📌 fuerza un ancho grande
+  clone.style.maxWidth = "3000px";
   clone.style.position = "absolute";
   clone.style.left = "-9999px";
   document.body.appendChild(clone);
@@ -610,6 +610,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
