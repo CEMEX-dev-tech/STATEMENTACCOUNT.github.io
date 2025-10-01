@@ -182,30 +182,43 @@
   </style>
 </head>
 <body>
-    <div class="screen active" id="loginScreen">
+    
+    <div class="screen active" id="loginScreen" 
+         style="display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; min-height:100vh;">
+    
       <h1 style="font-size:3rem; color:#0600b6; text-align:center;">Welcome!</h1>
-      <p style="font-size:2rem; text-align:center;">Please enter your password (Customer ID):</p>
-         
-      <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%;">
-        <input 
-          type="password" 
-          id="passwordInput" 
-          placeholder="Enter your Customer ID"
-          style="width:60%; height:50px; font-size:2rem; border:1px solid #ccc; border-radius:6px; margin-bottom:10px; box-sizing:border-box; font-family:'Outfit', sans-serif; text-align:center;"
-        >
+      
+      <p style="font-size:2rem; text-align:center;">Enter your Customer ID:</p>
+      <input 
+        type="password" 
+        id="customerIdInput" 
+        placeholder="Enter Customer ID"
+        style="width:50%; height:50px; font-size:2rem; margin-bottom:10px;"
+      >
     
-        <button 
-          onclick="checkPassword()" 
-          style="width:60%; height:50px; font-size:1.6rem; background:#0600b6; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:bold; font-family:'Outfit', sans-serif;"
-        >
-          SEARCH
-        </button>
-      </div>
+      <p style="font-size:2rem; text-align:center; display:none;" id="codeLabel">Enter your Code:</p>
+      <input 
+        type="password" 
+        id="codeInput" 
+        placeholder="Enter Code"
+        style="width:50%; height:50px; font-size:2rem; margin-bottom:10px; display:none;"
+      >
     
-      <p id="errorMsg" style="color:red; display:none; align-items:center; justify-content:center; font-size:1.5rem; margin-top:10px;">
-        No records found for this Customer.
+      <button onclick="checkCustomer()" 
+        style="width:50%; height:50px; font-size:2rem; background:#0600b6; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:bold;">
+        Next
+      </button>
+      <button onclick="checkCode()" 
+        id="codeButton"
+        style="width:50%; height:50px; font-size:2rem; background:#0600b6; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:bold; display:none;">
+        Login
+      </button>
+    
+      <p id="errorMsg" style="color:red; display:none; font-size:1.5rem; margin-top:10px;">
+        Invalid credentials. Try again.
       </p>
     </div>
+
  
     <!-- Screen 2: Data View -->
     <div class="screen" id="dataScreen">
@@ -317,19 +330,39 @@
     })
     .catch(err => console.error("Error loading CSV:", err));
 
-  function checkPassword(){
-    const pass = document.getElementById("passwordInput").value.trim();
-    currentCustomerRows = csvData.filter(row => row["CUSTOMER"] && row["CUSTOMER"].trim() === pass);
 
-    if(currentCustomerRows.length > 0){
+  let selectedCustomer = null; // guarda el cliente que pasa la primera validación
+  
+  function checkCustomer(){
+    const customerId = document.getElementById("customerIdInput").value.trim();
+    selectedCustomer = csvData.find(r => r["CUSTOMER"] && r["CUSTOMER"].trim() === customerId);
+  
+    if(selectedCustomer){
+      // Mostrar campo para CODE
+      document.getElementById("codeLabel").style.display = "block";
+      document.getElementById("codeInput").style.display = "block";
+      document.getElementById("codeButton").style.display = "block";
+    } else {
+      document.getElementById("errorMsg").style.display = "block";
+    }
+  }
+  
+  function checkCode(){
+    const codeEntered = document.getElementById("codeInput").value.trim();
+  
+    if(selectedCustomer && selectedCustomer["CODE"] && selectedCustomer["CODE"].trim() === codeEntered){
+      // ✅ Login correcto → mostrar datos
+      currentCustomerRows = csvData.filter(r => r["CUSTOMER"].trim() === selectedCustomer["CUSTOMER"].trim());
       populateCompanyFilter(currentCustomerRows);
       showData(currentCustomerRows);
+  
       document.getElementById("loginScreen").classList.remove("active");
       document.getElementById("dataScreen").classList.add("active");
     } else {
       document.getElementById("errorMsg").style.display = "block";
     }
   }
+
 
   function populateCompanyFilter(rows){
     const select = document.getElementById("companyFilter");
@@ -634,6 +667,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
