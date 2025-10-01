@@ -467,8 +467,8 @@ function showData(rows){
   const secondGroupDocs = ["Payment","Credit Note","Transfer","Refund"];
 
   // Separar registros
-  const firstGroup = rows.filter(r => firstGroupDocs.includes((r["DOCUMENT TYPE"]||"").trim()));
-  const secondGroup = rows.filter(r => secondGroupDocs.includes((r["DOCUMENT TYPE"]||"").trim()));
+  const firstGroup = rows.filter(r => firstGroupDocs.includes((r["DOC.TYPE"]||"").trim()));
+  const secondGroup = rows.filter(r => secondGroupDocs.includes((r["DOC.TYPE"]||"").trim()));
 
   let overdueTotal = 0;
   rows.forEach(r => {
@@ -682,6 +682,7 @@ function exportExcel() {
 </script>
 </body>
 </html>
+
 
 
 
