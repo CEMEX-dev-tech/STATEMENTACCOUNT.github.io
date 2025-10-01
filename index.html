@@ -96,10 +96,27 @@
     
     #filterBox {
       margin-bottom: 1rem;
-      padding: 1rem;
+      padding: 1.5rem;            
       background: #f9f9f9;
-      border: 1px solid #ddd;
+      border: 2px solid #ddd;    
+      border-radius: 12px;        
+      text-align: center;        
+    }
+    #filterBox label {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.8rem;         
+      font-weight: 600;
+      margin-right: 10px;
+    }
+
+    #companyFilter {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.5rem;          /* 👉 selector más grande */
+      padding: 10px 20px;         /* 👉 más altura y ancho */
       border-radius: 8px;
+      border: 1px solid #ccc;
+      background: white;
+      cursor: pointer;
     }
     #balanceBubble {
       display: flex;
@@ -692,6 +709,7 @@ function exportExcel() {
 </script>
 </body>
 </html>
+
 
 
 
