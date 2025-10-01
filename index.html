@@ -7,6 +7,7 @@
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
     body {
       font-family: 'Outfit', sans-serif; /* 👉 Outfit en toda la página */
@@ -259,6 +260,8 @@
     
     <button onclick="goBack()">Log Out</button>
     <button onclick="exportPDF()">Export to PDF</button>
+    <button onclick="exportExcel()">Export to Excel</button>
+
     </div>
   
   
@@ -593,7 +596,21 @@ async function exportPDF() {
 
   pdf.save("Account_Statement.pdf");
 }
+  
+function exportExcel() {
+  if (currentCustomerRows.length === 0) {
+    alert("No data to export");
+    return;
+  }
 
+  // Convierte JSON a hoja de Excel
+  const ws = XLSX.utils.json_to_sheet(currentCustomerRows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Account Statement");
+
+  // Exporta como .xlsx
+  XLSX.writeFile(wb, "Account_Statement.xlsx");
+}
   
 function goBack(){
     document.getElementById("dataScreen").classList.remove("active");
@@ -610,6 +627,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
