@@ -655,9 +655,18 @@ function exportExcel() {
 function goBack(){
     document.getElementById("dataScreen").classList.remove("active");
     document.getElementById("loginScreen").classList.add("active");
-    document.getElementById("passwordInput").value = "";
+
+    // Limpiar ambos campos
+    document.getElementById("customerIdInput").value = "";
+    document.getElementById("codeInput").value = "";
+
+    // Ocultar de nuevo el paso 2
+    document.getElementById("codeLabel").style.display = "none";
+    document.getElementById("codeInput").style.display = "none";
+    document.getElementById("codeButton").style.display = "none";
+
     document.getElementById("errorMsg").style.display = "none";
-  }
+}
  
     // ✅ Aquí agregas el script de la fecha
     const today = new Date();
@@ -667,6 +676,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
