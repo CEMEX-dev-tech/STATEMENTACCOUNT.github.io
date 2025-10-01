@@ -15,29 +15,29 @@
       min-height: 100vh;
       margin: 0;
     }
-      .screen {
+    #app {
+      width: 100%;
+      min-height: 100vh;
+    }
+    
+    .screen {
       display: none;
       background: white;
       padding: 2rem;
       border-radius: 12px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      width: 100%;          /* ✅ usar todo el ancho */
-      max-width: none;      /* ✅ sin límite */
+      width: 100%;
+      max-width: none;
       overflow-x: auto;
       box-sizing: border-box;
     }
-
-    .screen.active { display: block; }
-    h1 { color: #0600b6; margin-bottom: 1rem; }
-    input[type="password"], button, select {
-      padding: 10px;
-      margin-top: 10px;
-      width: 100%;
-      font-size: 1.5rem;
-      font-family: 'Outfit', sans-serif; /* aseguramos Outfit en inputs */
-      display: block;      /* 👈 necesario para centrar con margin auto */
-      margin-left: auto;   /* 👈 centra horizontal */
-      margin-right: auto;  /* 👈 centra horizontal */
+    
+    .screen.active {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start; /* login centrado, dataScreen arriba */
+      min-height: 100vh;
     }
     
     button {
@@ -188,7 +188,7 @@
   </style>
 </head>
 <body>
-    
+  <div id="app"> 
     <div class="screen active" id="loginScreen">
     
       <h1 style="font-size:3rem; color:#0600b6; text-align:center;">Welcome!</h1>
@@ -222,12 +222,12 @@
       <p id="errorMsg" style="color:red; display:none; font-size:1.5rem; margin-top:10px;">
         Invalid credentials. Try again.
       </p>
-    </div>
+  </div>
 
  
     <!-- Screen 2: Data View -->
     <div class="screen" id="dataScreen">
-    
+  </div>
     <img src="Picture11.png" alt="Logo"style="max-width:700px; display:block; margin:0 auto;">
   <!-- Legend -->
     <h1 style="text-align:center;">ACCOUNT STATEMENT</h1>
@@ -682,6 +682,7 @@ function exportExcel() {
 </script>
 </body>
 </html>
+
 
 
 
