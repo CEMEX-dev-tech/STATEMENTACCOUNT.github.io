@@ -569,7 +569,7 @@ async function exportPDF() {
 
   document.body.removeChild(clone); // limpiar clon
 
-  const imgData = canvas.toDataURL("image/png");
+  const imgData = canvas.toDataURL("image/jpeg", 0.7); // 0.7 = calidad (0 a 1)
   const pdf = new jsPDF({ orientation: "landscape", unit: "pt", format: "a3" }); // 📌 usa A3
 
   const pdfW = pdf.internal.pageSize.getWidth();
@@ -610,6 +610,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
