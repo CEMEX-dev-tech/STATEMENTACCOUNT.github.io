@@ -38,7 +38,11 @@
       width: 60%;
       font-size: 1.5rem;
       font-family: 'Outfit', sans-serif; /* aseguramos Outfit en inputs */
+      display: block;      /* 👈 necesario para centrar con margin auto */
+      margin-left: auto;   /* 👈 centra horizontal */
+      margin-right: auto;  /* 👈 centra horizontal */
     }
+    
     button {
       background: #0600b6;
       color: white;
@@ -46,6 +50,9 @@
       cursor: pointer;
       border-radius: 6px;
       font-family: 'Outfit', sans-serif;
+      display: block;      /* 👈 convierte el botón en bloque */
+      margin-left: auto;   /* 👈 centra horizontal */
+      margin-right: auto;  /* 👈 centra horizontal */
     }
     button:hover { background: #2d0e77; }
     table {
@@ -627,6 +634,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
