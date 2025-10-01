@@ -300,17 +300,17 @@
   const csvUrl = "data.csv"; // CSV en el mismo folder que index.html
 
   const selectedColumns = [
-    "BRANCH ACCOUNT",
+    "BRANCH",
     "NAME BRANCH",
     "DIVISION",
-    "DESCRIPTION DOCUMENT",
+    "DOC.TYPE",
     "# DOCUMENT",
     "ISSUED DATE",
-    "EXPIRATION DATE",
-    "DAYS OVERDUE TO DATE",
+    "NET DUE DATE",
+    "DUE DAYS",
     "AMOUNT",
     "BALANCE",
-    "CURRENCY",
+    "CUR.",
     "NOT OVERDUE",
     "1 TO 30 DD",
     "31 TO 60 DD",
@@ -463,12 +463,12 @@ function showData(rows){
     ${renderInfoBubble("Credit Limit", "$"+Number(creditLimit).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }))}
   `;
   // Categorías de documentos
-  const firstGroupDocs = ["Bounced Cheque","Invoice","Debit Note","Invoice I. L","Refund"];
-  const secondGroupDocs = ["Payment","Credit Note","Transfer"];
+  const firstGroupDocs = ["Bounced Cheque","Invoice","Debit Note","Invoice I. L"];
+  const secondGroupDocs = ["Payment","Credit Note","Transfer","Refund"];
 
   // Separar registros
-  const firstGroup = rows.filter(r => firstGroupDocs.includes((r["DESCRIPTION DOCUMENT"]||"").trim()));
-  const secondGroup = rows.filter(r => secondGroupDocs.includes((r["DESCRIPTION DOCUMENT"]||"").trim()));
+  const firstGroup = rows.filter(r => firstGroupDocs.includes((r["DOCUMENT TYPE"]||"").trim()));
+  const secondGroup = rows.filter(r => secondGroupDocs.includes((r["DOCUMENT TYPE"]||"").trim()));
 
   let overdueTotal = 0;
   rows.forEach(r => {
@@ -515,7 +515,7 @@ function showData(rows){
         }
 
         // 🚦 Semáforo en la columna DAYS OVERDUE TO DATE
-        if(c === "DAYS OVERDUE TO DATE" && value !== ""){
+        if(c === "DUE DAYS" && value !== ""){
           let num = parseFloat(value);
           let color = "black";
           if(num < 0) color = "green";
@@ -601,8 +601,8 @@ function showData(rows){
 
   // Renderizar tablas debajo
   container.innerHTML = "";
-  container.innerHTML += renderTable(firstGroup,"Documents: Bounced Cheque, Invoice, Debit Note, Refund");
-  container.innerHTML += renderTable(secondGroup,"Documents: Payment, Credit Note, Transfer");
+  container.innerHTML += renderTable(firstGroup,"Documents: Bounced Cheque, Invoice, Debit Note");
+  container.innerHTML += renderTable(secondGroup,"Documents: Payment, Credit Note, Transfer, Refund");
 }
   
 async function exportPDF() {
@@ -674,16 +674,15 @@ function exportExcel() {
   XLSX.writeFile(wb, "Account_Statement.xlsx");
 }
   
-
- 
-    // ✅ Aquí agregas el script de la fecha
-    const today = new Date();
-    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
-    document.getElementById("currentDate").textContent = today.toLocaleDateString("en-GB", options);
+  // ✅ Aquí agregas el script de la fecha
+  const today = new Date();
+  const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+  document.getElementById("currentDate").textContent = today.toLocaleDateString("en-GB", options);
      
 </script>
 </body>
 </html>
+
 
 
 
