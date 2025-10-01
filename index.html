@@ -349,31 +349,29 @@
     const codeEntered = document.getElementById("codeInput").value.trim();
   
     if(selectedCustomer && selectedCustomer["CODE"] && selectedCustomer["CODE"].trim() === codeEntered){
-      // ✅ Login correcto → mostrar datos
       currentCustomerRows = csvData.filter(r => r["CUSTOMER"].trim() === selectedCustomer["CUSTOMER"].trim());
       populateCompanyFilter(currentCustomerRows);
       showData(currentCustomerRows);
   
-      document.getElementById("loginScreen").classList.remove("active");
-      document.getElementById("dataScreen").classList.add("active");
+      // Ocultar login y mostrar dataScreen
+      document.getElementById("loginScreen").style.display = "none";
+      document.getElementById("dataScreen").style.display = "flex";
     } else {
       document.getElementById("errorMsg").style.display = "block";
     }
   }
-
+  
   function goBack(){
-    document.getElementById("dataScreen").classList.remove("active");
-    document.getElementById("loginScreen").classList.add("active");
-
-    // Limpiar ambos campos
+    // Ocultar dataScreen y mostrar login
+    document.getElementById("dataScreen").style.display = "none";
+    document.getElementById("loginScreen").style.display = "flex";
+  
+    // Limpiar campos
     document.getElementById("customerIdInput").value = "";
     document.getElementById("codeInput").value = "";
-
-    // Ocultar de nuevo el paso 2
     document.getElementById("codeLabel").style.display = "none";
     document.getElementById("codeInput").style.display = "none";
     document.getElementById("codeButton").style.display = "none";
-
     document.getElementById("errorMsg").style.display = "none";
   }
 
@@ -675,6 +673,7 @@ function exportExcel() {
 </script>
 </body>
 </html>
+
 
 
 
