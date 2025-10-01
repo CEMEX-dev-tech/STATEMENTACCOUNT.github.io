@@ -541,13 +541,11 @@ function showData(rows){
 }
   
 async function exportPDF() {
-  // Seguridad: verificar que jsPDF esté cargado
   if (!window.jspdf || !window.jspdf.jsPDF) {
-    alert("jsPDF no está cargado. Revisa la etiqueta <script> de jsPDF.");
+    alert("jsPDF not loaded.");
     return;
   }
 
-  // Esperar a que las fuentes (Outfit) estén listas para que el render sea idéntico
   if (document.fonts && document.fonts.ready) {
     try { await document.fonts.ready; } catch(e) {}
   }
@@ -555,19 +553,25 @@ async function exportPDF() {
   const { jsPDF } = window.jspdf;
   const node = document.getElementById("dataScreen");
 
-  // Capturar la vista tal cual
-  const canvas = await html2canvas(node, {
-    scale: 2,             // mayor resolución
+  // 👇 Clonar el nodo para exportar con ancho fijo
+  const clone = node.cloneNode(true);
+  clone.style.width = "1400px";   // 📌 fuerza un ancho grande
+  clone.style.maxWidth = "1400px";
+  clone.style.position = "absolute";
+  clone.style.left = "-9999px";
+  document.body.appendChild(clone);
+
+  const canvas = await html2canvas(clone, {
+    scale: 2,
     useCORS: true,
-    backgroundColor: "#ffffff",
-    scrollX: 0,
-    scrollY: -window.scrollY
+    backgroundColor: "#ffffff"
   });
 
-  const imgData = canvas.toDataURL("image/png");
-  const pdf = new jsPDF({ orientation: "landscape", unit: "pt", format: "a3" });
+  document.body.removeChild(clone); // limpiar clon
 
-  // Ajustar al ancho del PDF y paginar si es más alto
+  const imgData = canvas.toDataURL("image/png");
+  const pdf = new jsPDF({ orientation: "landscape", unit: "pt", format: "a3" }); // 📌 usa A3
+
   const pdfW = pdf.internal.pageSize.getWidth();
   const pdfH = pdf.internal.pageSize.getHeight();
 
@@ -581,7 +585,7 @@ async function exportPDF() {
   heightLeft -= pdfH;
 
   while (heightLeft > 0) {
-    position = heightLeft - imgH; // desplazamiento negativo para “cortar” la imagen
+    position = heightLeft - imgH;
     pdf.addPage();
     pdf.addImage(imgData, "PNG", 0, position, imgW, imgH);
     heightLeft -= pdfH;
@@ -589,6 +593,7 @@ async function exportPDF() {
 
   pdf.save("Account_Statement.pdf");
 }
+
   
 function goBack(){
     document.getElementById("dataScreen").classList.remove("active");
@@ -605,6 +610,7 @@ function goBack(){
 </script>
 </body>
 </html>
+
 
 
 
