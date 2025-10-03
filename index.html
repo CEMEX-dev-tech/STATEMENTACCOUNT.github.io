@@ -218,23 +218,35 @@
       0%, 100% { opacity: 1; }
       50% { opacity: 0.5; }
     }
-    .welcome-title {
+     .welcome-title {
       font-size: 3rem;
       color: #0600b6;
       text-align: center;
       font-family: 'Outfit', sans-serif;
-      animation: breathing 3s ease-in-out infinite;
+      animation: breathing 4s ease-in-out infinite;
     }
     
-    /* 🔹 Animación tipo respiración con sombra azul */
+    
     @keyframes breathing {
-      0%, 100% {
-        text-shadow: 0 0 5px #0600b6, 0 0 10px #0600b6;
-        transform: scale(1);
+      0% {
+        text-shadow: 0 0 2px #0600b6, 0 0 5px #0600b6;
+        transform: scale(1) rotate(0deg);
+      }
+      25% {
+        text-shadow: 0 0 8px #0600b6, 0 0 15px #0600b6;
+        transform: scale(1.05) rotate(20deg);
       }
       50% {
-        text-shadow: 0 0 15px #0600b6, 0 0 30px #0600b6;
-        transform: scale(1.05);
+        text-shadow: 0 0 4px #0600b6, 0 0 10px #0600b6;
+        transform: scale(1) rotate(0deg);
+      }
+      75% {
+        text-shadow: 0 0 12px #0600b6, 0 0 25px #0600b6;
+        transform: scale(1.05) rotate(160deg);
+      }
+      100% {
+        text-shadow: 0 0 2px #0600b6, 0 0 5px #0600b6;
+        transform: scale(1) rotate(0deg);
       }
     }
 
@@ -810,6 +822,7 @@ function exportExcel() {
 </script>
 </body>
 </html>
+
 
 
 
