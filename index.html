@@ -352,7 +352,22 @@
     "31 TO 60 DD",
     "> TO 60 - DD"
   ];
+  const secondGroupColumns = [
+    "# DOCUMENT",
+    "DOC.TYPE",
+    "ISSUED DATE",
+    "AMOUNT",
+    "CLEARING",
+    "COMMITTED",
+    "BALANCE"
+  ];
 
+  const secondGroupTotals = [
+    "AMOUNT",
+    "CLEARING",
+    "COMMITTED",
+    "BALANCE"
+  ];
   // Load CSV
   fetch(csvUrl)
     .then(res => res.text())
@@ -468,6 +483,61 @@ function renderInfoBubble(label, value){
       ${label}: ${value}
     </div>
   `;
+}
+
+function renderSecondGroupTable(data, title){
+  if(data.length === 0) return "";
+
+  let totals = {};
+  secondGroupTotals.forEach(c => totals[c] = 0);
+
+  let html = `<h2 style="margin-top:2rem; color:#0600b6;">${title}</h2>`;
+  html += `<div class="table-wrapper">`;
+  html += "<table><thead><tr>";
+  
+  // 👉 Encabezados
+  secondGroupColumns.forEach(c => {
+    html += `<th>${c}</th>`;
+  });
+  html += "</tr></thead><tbody>";
+
+  // 👉 Filas
+  data.forEach(r => {
+    html += "<tr>";
+    secondGroupColumns.forEach(c => {
+      let value = r[c] ?? "";
+
+      // Totales
+      if(secondGroupTotals.includes(c) && value){
+        let num = parseFloat(value.toString().replace(/,/g,""));
+        if(!isNaN(num)) totals[c] += num;
+      }
+
+      // Formatear números
+      if(secondGroupTotals.includes(c) && value !== ""){
+        let num = parseFloat(value.toString().replace(/,/g,""));
+        html += `<td>${!isNaN(num) ? num.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}) : value}</td>`;
+      } else {
+        html += `<td>${value}</td>`;
+      }
+    });
+    html += "</tr>";
+  });
+
+  // 👉 Fila de totales
+  html += "</tbody><tfoot><tr>";
+  secondGroupColumns.forEach(c => {
+    if(secondGroupTotals.includes(c)){
+      html += `<td><b>${totals[c] ? totals[c].toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}) : "0.00"}</b></td>`;
+    } else if(c === secondGroupColumns[0]){
+      html += "<td><b>Totals</b></td>";
+    } else {
+      html += "<td></td>";
+    }
+  });
+  html += "</tr></tfoot></table></div>";
+
+  return html;
 }
 
 function showData(rows){
@@ -637,7 +707,7 @@ function showData(rows){
   // Renderizar tablas debajo
   container.innerHTML = "";
   container.innerHTML += renderTable(firstGroup,"Documents: Bounced Cheque, Invoice, Debit Note");
-  container.innerHTML += renderTable(secondGroup,"Documents: Payment, Credit Note, Transfer, Refund");
+  container.innerHTML += renderSecondGroupTable(secondGroup,"Documents: Payment, Credit Note, Transfer, Refund");
 }
   
 async function exportPDF() {
@@ -717,6 +787,7 @@ function exportExcel() {
 </script>
 </body>
 </html>
+
 
 
 
