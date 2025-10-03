@@ -358,28 +358,8 @@
 <script>
   let csvData = []; 
   let currentCustomerRows = [];
-  
-  
-  const csvUrl = "https://cemex-my.sharepoint.com/:x:/p/carlosfelipe_pedraza/EaEAR4g5zD9NmdKe_3mxLD8BVtukSUENnuJKxs9g4TfUwg?download=1";
-  
-  // Cargar CSV con PapaParse
-  fetch(csvUrl)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error("Error al cargar CSV: " + response.status);
-      }
-      return response.text();
-    })
-    .then(csvText => {
-      const parsed = Papa.parse(csvText, {
-        header: true,
-        skipEmptyLines: true
-      });
-      console.log("✅ CSV cargado:", parsed.data);
-      // 👉 Aquí llamas a tu showData(parsed.data)
-    })
-    .catch(err => console.error("❌ No se pudo cargar el CSV:", err));
-
+    
+  const csvUrl = "data.csv"; // CSV en el mismo folder que index.html
 
   const selectedColumns = [
     "BRANCH",
@@ -842,6 +822,7 @@ function exportExcel() {
 </script>
 </body>
 </html>
+
 
 
 
