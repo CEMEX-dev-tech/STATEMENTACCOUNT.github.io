@@ -358,11 +358,11 @@
 <script>
   let csvData = []; 
   let currentCustomerRows = [];
-  // 👉 Usa el link con ?download=1 para intentar descarga directa
-  // 👉 Usa el link con ?download=1 para intentar descarga directa
-  const csvUrl = "https://cemex-my.sharepoint.com/:x:/p/carlosfelipe_pedraza/EaEAR4g5zD9NmdKe_3mxLD8Bf4-wTTVRWj_32W2xKiseVQ?download=1";
   
-  // Cargar CSV con fetch + PapaParse
+  
+  const csvUrl = "https://cemex-my.sharepoint.com/:x:/p/carlosfelipe_pedraza/EaEAR4g5zD9NmdKe_3mxLD8BVtukSUENnuJKxs9g4TfUwg?download=1";
+  
+  // Cargar CSV con PapaParse
   fetch(csvUrl)
     .then(response => {
       if (!response.ok) {
@@ -375,8 +375,8 @@
         header: true,
         skipEmptyLines: true
       });
-      console.log("✅ CSV cargado desde SharePoint:", parsed.data);
-      // 👉 aquí sigues con tu lógica showData(parsed.data) o similar
+      console.log("✅ CSV cargado:", parsed.data);
+      // 👉 Aquí llamas a tu showData(parsed.data)
     })
     .catch(err => console.error("❌ No se pudo cargar el CSV:", err));
 
@@ -842,6 +842,7 @@ function exportExcel() {
 </script>
 </body>
 </html>
+
 
 
 
