@@ -218,6 +218,25 @@
       0%, 100% { opacity: 1; }
       50% { opacity: 0.5; }
     }
+    .welcome-title {
+      font-size: 3rem;
+      color: #0600b6;
+      text-align: center;
+      font-family: 'Outfit', sans-serif;
+      animation: breathing 3s ease-in-out infinite;
+    }
+    
+    /* 🔹 Animación tipo respiración con sombra azul */
+    @keyframes breathing {
+      0%, 100% {
+        text-shadow: 0 0 5px #0600b6, 0 0 10px #0600b6;
+        transform: scale(1);
+      }
+      50% {
+        text-shadow: 0 0 15px #0600b6, 0 0 30px #0600b6;
+        transform: scale(1.05);
+      }
+    }
 
   </style>
 </head>
@@ -225,7 +244,8 @@
   <div id="app"> 
     <!-- Screen 1: Login -->
     <div class="screen active" id="loginScreen">
-      <h1 style="font-size:3rem; color:#0600b6; text-align:center;">Welcome!</h1>
+      
+      <h1 class="welcome-title">Welcome!</h1>
       
       <p style="font-family:'Outfit', sans-serif; font-size:2rem; text-align:center;">
         Enter your Customer ID:
@@ -790,6 +810,7 @@ function exportExcel() {
 </script>
 </body>
 </html>
+
 
 
 
