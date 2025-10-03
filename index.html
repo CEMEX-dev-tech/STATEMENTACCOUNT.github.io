@@ -706,8 +706,8 @@ function showData(rows){
 
   // Renderizar tablas debajo
   container.innerHTML = "";
-  container.innerHTML += renderTable(firstGroup,"Documents: Bounced Cheque, Invoice, Debit Note");
-  container.innerHTML += renderSecondGroupTable(secondGroup,"Documents: Payment, Credit Note, Transfer, Refund");
+  container.innerHTML += renderTable(firstGroup,"Detail of Returned Cheques, Invoices, and Debit Notes");
+  container.innerHTML += renderSecondGroupTable(secondGroup,"Pending to applied");
 }
   
 async function exportPDF() {
@@ -787,6 +787,7 @@ function exportExcel() {
 </script>
 </body>
 </html>
+
 
 
 
