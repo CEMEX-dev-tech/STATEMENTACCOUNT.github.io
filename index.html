@@ -362,12 +362,52 @@
 
   </div> <!-- ✅ fin de app -->
 
- 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
 <script>
-  let csvData = []; 
+  let csvData = [];
   let currentCustomerRows = [];
-    
-  const csvUrl = "data.csv"; // CSV en el mismo folder que index.html
+  
+  async function loadEncryptedCSV() {
+    try {
+      const res = await fetch("data.csv.enc");
+      const encryptedText = await res.text();
+
+      // 🔑 Pide la clave al usuario
+      const passphrase = prompt("Enter decryption key:");
+      if (!passphrase) throw new Error("No password entered");
+
+      // Decodificar Base64
+      const encryptedBytes = CryptoJS.enc.Base64.parse(encryptedText);
+      const iv = CryptoJS.lib.WordArray.create(encryptedBytes.words.slice(0, 4)); // primeros 16 bytes (IV)
+      const ciphertext = CryptoJS.lib.WordArray.create(encryptedBytes.words.slice(4)); // resto
+
+      // Descifrar con AES-CBC (misma lógica que Python)
+      const decrypted = CryptoJS.AES.decrypt(
+        { ciphertext },
+        CryptoJS.enc.Utf8.parse(passphrase.padEnd(32, "\0")),
+        { iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
+      );
+
+      const csvText = decrypted.toString(CryptoJS.enc.Utf8);
+      if (!csvText) throw new Error("Invalid password or corrupted file");
+
+      // Parsear el CSV descifrado
+      const parsed = Papa.parse(csvText, {
+        header: true,
+        skipEmptyLines: true,
+        transformHeader: h => h.trim()
+      });
+      csvData = parsed.data;
+      console.log("✅ CSV decrypted and loaded successfully");
+    } catch (err) {
+      console.error("❌ Error decrypting CSV:", err);
+      alert("Invalid decryption key or file error");
+    }
+  }
+
+  // Llamar a la función al cargar la página
+  loadEncryptedCSV();
 
   const selectedColumns = [
     "BRANCH",
@@ -411,18 +451,7 @@
     "COMMITTED",
     "BALANCE"
   ];
-  // Load CSV
-  fetch(csvUrl)
-    .then(res => res.text())
-    .then(csvText => {
-      const parsed = Papa.parse(csvText, {
-        header:true, 
-        skipEmptyLines:true,
-        transformHeader: h => h.trim() // respeta mayúsculas
-      });
-      csvData = parsed.data;
-    })
-    .catch(err => console.error("Error loading CSV:", err));
+
 
 
   let selectedCustomer = null; // guarda el cliente que pasa la primera validación
@@ -830,6 +859,7 @@ function exportExcel() {
 </script>
 </body>
 </html>
+
 
 
 
