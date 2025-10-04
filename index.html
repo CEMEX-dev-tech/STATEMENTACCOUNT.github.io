@@ -444,6 +444,7 @@
     selectedCustomer = csvData.find(r => r["CUSTOMER"] && r["CUSTOMER"].trim() === customerId);
   
     if(selectedCustomer){
+      document.querySelector('button[onclick="checkCustomer()"]').style.display = "none";
       // Mostrar campo para CODE
       document.getElementById("codeLabel").style.display = "block";
       document.getElementById("codeInput").style.display = "block";
@@ -866,6 +867,7 @@ function exportExcel() {
 </script>
 </body>
 </html>
+
 
 
 
