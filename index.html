@@ -471,17 +471,15 @@
   }
   
   function goBack(){
-    // Ocultar dataScreen y mostrar login
     document.getElementById("dataScreen").style.display = "none";
     document.getElementById("loginScreen").style.display = "flex";
-  
-    // Limpiar campos
     document.getElementById("customerIdInput").value = "";
     document.getElementById("codeInput").value = "";
     document.getElementById("codeLabel").style.display = "none";
     document.getElementById("codeInput").style.display = "none";
     document.getElementById("codeButton").style.display = "none";
     document.getElementById("errorMsg").style.display = "none";
+    document.querySelector('button[onclick="checkCustomer()"]').style.display = "inline-block";
   }
 
   function populateCompanyFilter(rows){
@@ -867,6 +865,7 @@ function exportExcel() {
 </script>
 </body>
 </html>
+
 
 
 
