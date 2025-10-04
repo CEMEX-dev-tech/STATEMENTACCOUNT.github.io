@@ -367,56 +367,32 @@
 <script>
   let csvData = [];
   let currentCustomerRows = [];
-  
 
-  async function loadEncryptedCSV() {
-  try {
-    const res = await fetch("data.csv.enc");
-    if (!res.ok) throw new Error("No se pudo descargar data.csv.enc");
-    // Base64 sin espacios/linebreaks
-    const encryptedB64 = (await res.text()).replace(/\s+/g, "").trim();
+  // ✅ Cargar CSV normal (sin cifrado)
+  async function loadCSV() {
+    try {
+      const res = await fetch("data.csv");
+      if (!res.ok) throw new Error("No se pudo descargar data.csv");
 
-    // Clave del usuario
-    const passphrase = prompt("Enter decryption key:");
-    if (!passphrase) throw new Error("No password entered");
+      const csvText = await res.text();
 
-    // === Parseo Base64 y separación IV + ciphertext ===
-    const all = CryptoJS.enc.Base64.parse(encryptedB64);
-    const iv = CryptoJS.lib.WordArray.create(all.words.slice(0, 4), 16); // 16 bytes
-    const ct = CryptoJS.lib.WordArray.create(
-      all.words.slice(4),
-      all.sigBytes - 16
-    );
+      // 📊 Parsear CSV con PapaParse
+      const parsed = Papa.parse(csvText, {
+        header: true,
+        skipEmptyLines: true,
+        transformHeader: h => h.trim()
+      });
 
-    // === Clave exactamente como en Colab: pad a 32 bytes con \0 ===
-    const key = CryptoJS.enc.Utf8.parse(passphrase.padEnd(32, "\0"));
-
-    // === Decrypt AES-CBC/PKCS7 ===
-    const decryptedWA = CryptoJS.AES.decrypt(
-      { ciphertext: ct },
-      key,
-      { iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
-    );
-    const csvText = CryptoJS.enc.Utf8.stringify(decryptedWA);
-    if (!csvText) throw new Error("Invalid password or corrupted file");
-
-    // === Parsear CSV ===
-    const parsed = Papa.parse(csvText, {
-      header: true,
-      skipEmptyLines: true,
-      transformHeader: h => h.trim()
-    });
-    window.csvData = parsed.data;
-    console.log("✅ CSV decrypted and loaded successfully");
-  } catch (err) {
-    console.error("❌ Error decrypting CSV:", err);
-    alert("Invalid decryption key or file error");
+      csvData = parsed.data;
+      console.log("✅ CSV cargado correctamente con", csvData.length, "filas.");
+    } catch (err) {
+      console.error("❌ Error cargando el CSV:", err);
+      alert("Error loading data file. Please try again later.");
+    }
   }
-}
-loadEncryptedCSV();
 
-  // Llamar a la función al cargar la página
-  loadEncryptedCSV();
+  // 🚀 Llamar a la función al cargar la página
+  loadCSV();
 
   const selectedColumns = [
     "BRANCH",
@@ -860,14 +836,26 @@ function exportExcel() {
   XLSX.writeFile(wb, "Account_Statement.xlsx");
 }
   
-  // ✅ Aquí agregas el script de la fecha
+
   const today = new Date();
   const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
   document.getElementById("currentDate").textContent = today.toLocaleDateString("en-GB", options);
+  document.addEventListener("contextmenu", e => e.preventDefault());
+  document.addEventListener("keydown", e => {
+    if (
+      e.key === "F12" ||
+      (e.ctrlKey && e.shiftKey && ["I", "C", "J"].includes(e.key)) ||
+      (e.ctrlKey && ["U", "S"].includes(e.key))
+    ) {
+      e.preventDefault();
+      alert("⚠️ Access to developer tools is disabled on this page.");
+    }
+  });
      
 </script>
 </body>
 </html>
+
 
 
 
