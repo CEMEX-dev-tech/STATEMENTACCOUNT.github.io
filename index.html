@@ -368,43 +368,52 @@
   let csvData = [];
   let currentCustomerRows = [];
   
+
   async function loadEncryptedCSV() {
-    try {
-      const res = await fetch("data.csv.enc");
-      const encryptedText = await res.text();
+  try {
+    const res = await fetch("data.csv.enc");
+    if (!res.ok) throw new Error("No se pudo descargar data.csv.enc");
+    // Base64 sin espacios/linebreaks
+    const encryptedB64 = (await res.text()).replace(/\s+/g, "").trim();
 
-      // 🔑 Pide la clave al usuario
-      const passphrase = prompt("Enter decryption key:");
-      if (!passphrase) throw new Error("No password entered");
+    // Clave del usuario
+    const passphrase = prompt("Enter decryption key:");
+    if (!passphrase) throw new Error("No password entered");
 
-      // Decodificar Base64
-      const encryptedBytes = CryptoJS.enc.Base64.parse(encryptedText);
-      const iv = CryptoJS.lib.WordArray.create(encryptedBytes.words.slice(0, 4)); // primeros 16 bytes (IV)
-      const ciphertext = CryptoJS.lib.WordArray.create(encryptedBytes.words.slice(4)); // resto
+    // === Parseo Base64 y separación IV + ciphertext ===
+    const all = CryptoJS.enc.Base64.parse(encryptedB64);
+    const iv = CryptoJS.lib.WordArray.create(all.words.slice(0, 4), 16); // 16 bytes
+    const ct = CryptoJS.lib.WordArray.create(
+      all.words.slice(4),
+      all.sigBytes - 16
+    );
 
-      // Descifrar con AES-CBC (misma lógica que Python)
-      const decrypted = CryptoJS.AES.decrypt(
-        { ciphertext },
-        CryptoJS.enc.Utf8.parse(passphrase.padEnd(32, "\0")),
-        { iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
-      );
+    // === Clave exactamente como en Colab: pad a 32 bytes con \0 ===
+    const key = CryptoJS.enc.Utf8.parse(passphrase.padEnd(32, "\0"));
 
-      const csvText = decrypted.toString(CryptoJS.enc.Utf8);
-      if (!csvText) throw new Error("Invalid password or corrupted file");
+    // === Decrypt AES-CBC/PKCS7 ===
+    const decryptedWA = CryptoJS.AES.decrypt(
+      { ciphertext: ct },
+      key,
+      { iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
+    );
+    const csvText = CryptoJS.enc.Utf8.stringify(decryptedWA);
+    if (!csvText) throw new Error("Invalid password or corrupted file");
 
-      // Parsear el CSV descifrado
-      const parsed = Papa.parse(csvText, {
-        header: true,
-        skipEmptyLines: true,
-        transformHeader: h => h.trim()
-      });
-      csvData = parsed.data;
-      console.log("✅ CSV decrypted and loaded successfully");
-    } catch (err) {
-      console.error("❌ Error decrypting CSV:", err);
-      alert("Invalid decryption key or file error");
-    }
+    // === Parsear CSV ===
+    const parsed = Papa.parse(csvText, {
+      header: true,
+      skipEmptyLines: true,
+      transformHeader: h => h.trim()
+    });
+    window.csvData = parsed.data;
+    console.log("✅ CSV decrypted and loaded successfully");
+  } catch (err) {
+    console.error("❌ Error decrypting CSV:", err);
+    alert("Invalid decryption key or file error");
   }
+}
+loadEncryptedCSV();
 
   // Llamar a la función al cargar la página
   loadEncryptedCSV();
@@ -859,6 +868,7 @@ function exportExcel() {
 </script>
 </body>
 </html>
+
 
 
 
