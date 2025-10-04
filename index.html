@@ -838,21 +838,35 @@ function exportExcel() {
   const today = new Date();
   const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
   document.getElementById("currentDate").textContent = today.toLocaleDateString("en-GB", options);
-  document.addEventListener("contextmenu", e => e.preventDefault());
+
+ 
+  window.oncontextmenu = () => false; 
   document.addEventListener("keydown", e => {
     if (
       e.key === "F12" ||
-      (e.ctrlKey && e.shiftKey && ["I", "C", "J"].includes(e.key)) ||
-      (e.ctrlKey && ["U", "S"].includes(e.key))
+      (e.ctrlKey && e.shiftKey && ["I", "C", "J"].includes(e.key.toUpperCase())) ||
+      (e.ctrlKey && ["U", "S"].includes(e.key.toUpperCase()))
     ) {
       e.preventDefault();
-      alert("⚠️ Access to developer tools is disabled on this page.");
+      alert("⚠️ Developer tools are disabled on this page.");
     }
   });
+ 
+  setInterval(() => {
+    const threshold = 160;
+    const start = performance.now();
+    debugger;
+    const delay = performance.now() - start;
+    if (delay > threshold) {
+      alert("⚠️ Developer tools detected. Please close them to continue.");
+      window.location.href = "about:blank"; 
+    }
+  }, 1000);
      
 </script>
 </body>
 </html>
+
 
 
 
