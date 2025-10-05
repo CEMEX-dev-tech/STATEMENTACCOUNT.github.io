@@ -68,7 +68,6 @@
       font-weight: bold;
       box-shadow: 0 2px 0 2px #DDD;
     }
-
     
     button:before{
       font-family:'Outfit',sans-serif;
@@ -98,6 +97,7 @@
     button:active{
       transform:scale(0.9);
     }
+
     table {
       width: 100%;
       border-collapse: collapse;
@@ -315,6 +315,49 @@
   
     .ribbon a:hover {
       text-decoration: underline;
+    }
+    @media screen and (max-width: 768px) {
+      .welcome-title {
+        font-size: 2.2rem;
+      }
+      #loginScreen input {
+        width: 80% !important;
+        font-size: 1.3rem !important;
+      }
+      button {
+        font-size: 1rem !important;
+        padding: 0.7em 1.4em !important;
+      }
+      #dataScreen h1 {
+        font-size: 1.8rem;
+        text-align: center;
+      }
+      .table-wrapper {
+        overflow-x: scroll;
+      }
+      table {
+        min-width: 600px;
+        font-size: 0.8rem;
+      }
+      th, td {
+        padding: 4px;
+      }
+      .ribbon {
+        font-size: 1rem;
+        padding: 8px 15px;
+        line-height: 1.4;
+        white-space: normal;
+      }
+      /* Botones finales apilados */
+      #dataScreen div[style*="justify-content:center"] {
+        flex-direction: column;
+        align-items: center;
+      }
+      #dataScreen button {
+        width: 70% !important;
+        height: 45px !important;
+        font-size: 1.2rem !important;
+      }
     }
 
   </style>
@@ -970,6 +1013,7 @@ function exportExcel() {
 </script>
 </body>
 </html>
+
 
 
 
