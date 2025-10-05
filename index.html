@@ -430,6 +430,7 @@
 <script>
   let csvData = [];
   let currentCustomerRows = [];
+  let attempts = 0; 
 
   // ✅ Cargar CSV normal (sin cifrado)
   async function loadCSV() {
@@ -500,8 +501,6 @@
     "BALANCE"
   ];
 
-
-
   let selectedCustomer = null; // guarda el cliente que pasa la primera validación
   
   function checkCustomer(){
@@ -516,6 +515,36 @@
       document.getElementById("codeButton").style.display = "block";
     } else {
       document.getElementById("errorMsg").style.display = "block";
+    }
+  }
+  // 🧠 Nueva función con límite de intentos
+  function checkCode() {
+    const codeEntered = document.getElementById("codeInput").value.trim();
+
+    if (selectedCustomer && selectedCustomer["CODE"] && selectedCustomer["CODE"].trim() === codeEntered) {
+      // ✅ Acceso correcto
+      currentCustomerRows = csvData.filter(r => r["CUSTOMER"].trim() === selectedCustomer["CUSTOMER"].trim());
+      populateCompanyFilter(currentCustomerRows);
+      showData(currentCustomerRows);
+
+      document.getElementById("loginScreen").style.display = "none";
+      document.getElementById("dataScreen").style.display = "flex";
+    } else {
+      attempts++;
+      document.getElementById("errorMsg").style.display = "block";
+
+      if (attempts >= 3) {
+        // ❌ Bloqueo total tras 3 intentos
+        document.getElementById("loginScreen").innerHTML = `
+          <div class="ribbon" style="margin-top:200px; animation:none; text-align:center; font-size:1.8rem; padding:30px 60px;">
+            Access blocked after 3 failed attempts.<br><br>
+            Need assistance? Contact us: 
+            <a href="mailto:creditandcollection.tcl@cemex.com" style="color:white; text-decoration:none;">
+              creditandcollection.tcl@cemex.com
+            </a>
+          </div>
+        `;
+      }
     }
   }
   
@@ -930,6 +959,7 @@ function exportExcel() {
 </script>
 </body>
 </html>
+
 
 
 
