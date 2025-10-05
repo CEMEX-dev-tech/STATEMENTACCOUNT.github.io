@@ -1003,27 +1003,57 @@ function exportExcel() {
   XLSX.writeFile(wb, "Account_Statement.xlsx");
 }
 
-function filterColumn(input, columnName, tableTitle){
+function filterColumn(input, columnName, tableTitle) {
   const filter = input.value.toLowerCase();
-  const tableBody = document.getElementById('body_' + tableTitle.replace(/\s+/g,'_'));
-  if(!tableBody) return;
-  
+  const tableBody = document.getElementById('body_' + tableTitle.replace(/\s+/g, '_'));
+  if (!tableBody) return;
+
   const rows = tableBody.getElementsByTagName("tr");
   const headers = tableBody.parentElement.querySelectorAll("th");
-  
-  // Buscar el índice de la columna correspondiente
   const index = Array.from(headers).findIndex(th => th.textContent.includes(columnName));
-  if(index === -1) return;
-  
-  for(let row of rows){
+  if (index === -1) return;
+
+  // 🔹 Mostrar/ocultar filas según filtro
+  for (let row of rows) {
     const cell = row.getElementsByTagName("td")[index];
-    if(cell){
+    if (cell) {
       const textValue = cell.textContent || cell.innerText;
       row.style.display = textValue.toLowerCase().includes(filter) ? "" : "none";
     }
   }
-}
 
+  // 🔹 Recalcular totales visibles
+  const tfoot = tableBody.parentElement.querySelector("tfoot tr");
+  if (!tfoot) return;
+
+  const totalCells = tfoot.getElementsByTagName("td");
+  const visibleRows = Array.from(rows).filter(r => r.style.display !== "none");
+
+  // Determinar qué columnas son numéricas
+  const numericCols = [];
+  headers.forEach((th, i) => {
+    if (th.textContent.match(/amount|balance|overdue|dd|clearing|committed/i)) numericCols.push(i);
+  });
+
+  // Recalcular valores
+  numericCols.forEach(i => {
+    let sum = 0;
+    visibleRows.forEach(r => {
+      const td = r.getElementsByTagName("td")[i];
+      if (td) {
+        let num = parseFloat(td.textContent.replace(/,/g, ""));
+        if (!isNaN(num)) sum += num;
+      }
+    });
+
+    if (totalCells[i]) {
+      totalCells[i].innerHTML = `<b>${sum.toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      })}</b>`;
+    }
+  });
+}
   const today = new Date();
   const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
   document.getElementById("currentDate").textContent = today.toLocaleDateString("en-GB", options);
@@ -1055,6 +1085,7 @@ function filterColumn(input, columnName, tableTitle){
 </script>
 </body>
 </html>
+
 
 
 
