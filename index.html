@@ -430,7 +430,7 @@
 <script>
   let csvData = [];
   let currentCustomerRows = [];
-  let attempts = 0; 
+  let loginAttempts = 0; // contador de intentos 
 
   // ✅ Cargar CSV normal (sin cifrado)
   async function loadCSV() {
@@ -517,20 +517,29 @@
       document.getElementById("errorMsg").style.display = "block";
     }
   }
-  // 🧠 Nueva función con límite de intentos
+ 
   function checkCode() {
     const codeEntered = document.getElementById("codeInput").value.trim();
 
-    if (selectedCustomer && selectedCustomer["CODE"] && selectedCustomer["CODE"].trim() === codeEntered) {
-      // ✅ Acceso correcto
-      currentCustomerRows = csvData.filter(r => r["CUSTOMER"].trim() === selectedCustomer["CUSTOMER"].trim());
+    if (
+      selectedCustomer &&
+      selectedCustomer["CODE"] &&
+      selectedCustomer["CODE"].trim() === codeEntered
+    ) {
+      // ✅ Si el código es correcto
+      loginAttempts = 0; // resetear intentos
+      currentCustomerRows = csvData.filter(
+        r => r["CUSTOMER"].trim() === selectedCustomer["CUSTOMER"].trim()
+      );
       populateCompanyFilter(currentCustomerRows);
       showData(currentCustomerRows);
 
+      // Ocultar login y mostrar dataScreen
       document.getElementById("loginScreen").style.display = "none";
       document.getElementById("dataScreen").style.display = "flex";
     } else {
-      attempts++;
+      // ❌ Si el código es incorrecto
+      loginAttempts++;
       document.getElementById("errorMsg").style.display = "block";
 
       if (attempts >= 3) {
@@ -959,6 +968,7 @@ function exportExcel() {
 </script>
 </body>
 </html>
+
 
 
 
