@@ -358,6 +358,10 @@
         height: 45px !important;
         font-size: 1.2rem !important;
       }
+      table input[type="text"] {
+        font-size: 0.8rem !important;
+        width: 80px !important;
+      }
     }
 
   </style>
@@ -602,22 +606,7 @@
     }
   }
   
-  function checkCode(){
-    const codeEntered = document.getElementById("codeInput").value.trim();
-  
-    if(selectedCustomer && selectedCustomer["CODE"] && selectedCustomer["CODE"].trim() === codeEntered){
-      currentCustomerRows = csvData.filter(r => r["CUSTOMER"].trim() === selectedCustomer["CUSTOMER"].trim());
-      populateCompanyFilter(currentCustomerRows);
-      showData(currentCustomerRows);
-  
-      // Ocultar login y mostrar dataScreen
-      document.getElementById("loginScreen").style.display = "none";
-      document.getElementById("dataScreen").style.display = "flex";
-    } else {
-      document.getElementById("errorMsg").style.display = "block";
-    }
-  }
-  
+   
   function goBack(){
     document.getElementById("dataScreen").style.display = "none";
     document.getElementById("loginScreen").style.display = "flex";
@@ -687,35 +676,32 @@ function renderInfoBubble(label, value){
   `;
 }
 
-function renderSecondGroupTable(data, title){
-  if(data.length === 0) return "";
+function renderSecondGroupTable(data, title) {
+  if (data.length === 0) return "";
 
   let totals = {};
   secondGroupTotals.forEach(c => totals[c] = 0);
 
   let html = `<h2 style="margin-top:2rem; color:#0600b6;">${title}</h2>`;
-  html += `<div class="table-wrapper">`;
-  html += "<table><thead><tr>";
-  
-  // 👉 Encabezados
-  secondGroupColumns.forEach(c => {
-    html += `<th>${c}</th>`;
-  });
-  html += "</tr></thead><tbody>";
+  html += `<div class="table-wrapper"><table><thead><tr>`;
 
-  // 👉 Filas
+  secondGroupColumns.forEach(c => {
+    html += `<th>${c}<br><input type="text" placeholder="🔍" 
+      onkeyup="filterColumn(this, '${c}', '${title}')"
+      style="width:90%; font-size:0.9rem; padding:2px 5px; border:1px solid #ccc; border-radius:4px;"></th>`;
+  });
+  html += "</tr></thead><tbody id='body_" + title.replace(/\s+/g,'_') + "'>";
+
   data.forEach(r => {
     html += "<tr>";
     secondGroupColumns.forEach(c => {
       let value = r[c] ?? "";
 
-      // Totales
       if(secondGroupTotals.includes(c) && value){
         let num = parseFloat(value.toString().replace(/,/g,""));
         if(!isNaN(num)) totals[c] += num;
       }
 
-      // Formatear números
       if(secondGroupTotals.includes(c) && value !== ""){
         let num = parseFloat(value.toString().replace(/,/g,""));
         html += `<td>${!isNaN(num) ? num.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}) : value}</td>`;
@@ -726,7 +712,6 @@ function renderSecondGroupTable(data, title){
     html += "</tr>";
   });
 
-  // 👉 Fila de totales
   html += "</tbody><tfoot><tr>";
   secondGroupColumns.forEach(c => {
     if(secondGroupTotals.includes(c)){
@@ -738,7 +723,6 @@ function renderSecondGroupTable(data, title){
     }
   });
   html += "</tr></tfoot></table></div>";
-
   return html;
 }
 
@@ -789,73 +773,68 @@ function showData(rows){
       coverage = Math.abs(secondGroupTotalBalance) / overdueTotal;
     }
   
-  // Función para renderizar tabla
-  function renderTable(data, title){
-    if(data.length === 0) return "";
 
-    let totals = {};
-    totalColumns.forEach(c => totals[c] = 0);
+function renderTable(data, title) {
+  if (data.length === 0) return "";
 
-    let html = `<h2 style="margin-top:2rem; color:#0600b6;">${title}</h2>`;
-    html += `<div class="table-wrapper">`;
-    html += "<table><thead><tr>";
+  let totals = {};
+  totalColumns.forEach(c => totals[c] = 0);
+
+  // Encabezado con filtros
+  let html = `<h2 style="margin-top:2rem; color:#0600b6;">${title}</h2>`;
+  html += `<div class="table-wrapper"><table><thead><tr>`;
+
+  selectedColumns.forEach(c => {
+    html += `<th>${c}<br><input type="text" placeholder="🔍" 
+      onkeyup="filterColumn(this, '${c}', '${title}')"
+      style="width:90%; font-size:0.9rem; padding:2px 5px; border:1px solid #ccc; border-radius:4px;"></th>`;
+  });
+  html += "</tr></thead><tbody id='body_" + title.replace(/\s+/g,'_') + "'>";
+
+  data.forEach(r => {
+    html += "<tr>";
     selectedColumns.forEach(c => {
-      if(c === "1 TO 30 DD" || c === "31 TO 60 DD" || c === "> TO 60 - DD"){
-        // 🔹 Fondo celeste para estos títulos
-        html += `<th style="background:#f7212e; color:white;">${c}</th>`;
+      let value = r[c] ?? "";
+
+      // Calcular totales
+      if(totalColumns.includes(c) && value){
+        let num = parseFloat(value.toString().replace(/,/g,""));
+        if(!isNaN(num)) totals[c] += num;
+      }
+
+      // Color según días vencidos
+      if(c === "DUE DAYS" && value !== ""){
+        let num = parseFloat(value);
+        let color = "black";
+        if(num < 0) color = "green";
+        else if(num === 0) color = "orange";
+        else if(num > 0) color = "red";
+        html += `<td style="color:${color}; font-weight:bold;">${value}</td>`;
+      } 
+      else if(totalColumns.includes(c) && value !== "") {
+        let num = parseFloat(value.toString().replace(/,/g,""));
+        html += `<td>${!isNaN(num) ? num.toLocaleString("en-US", {minimumFractionDigits:2,maximumFractionDigits:2}) : value}</td>`;
       } else {
-        html += `<th>${c}</th>`;
+        html += `<td>${value}</td>`;
       }
     });
-    html += "</tr></thead><tbody>";
+    html += "</tr>";
+  });
 
-
-    data.forEach(r => {
-      html += "<tr>";
-      selectedColumns.forEach(c => {
-        let value = r[c] ?? "";
-
-        // Acumular totales
-        if(totalColumns.includes(c) && value){
-          let num = parseFloat(value.toString().replace(/,/g,""));
-          if(!isNaN(num)) totals[c] += num;
-        }
-
-        // 🚦 Semáforo en la columna DAYS OVERDUE TO DATE
-        if(c === "DUE DAYS" && value !== ""){
-          let num = parseFloat(value);
-          let color = "black";
-          if(num < 0) color = "green";
-          else if(num === 0) color = "orange";
-          else if(num > 0) color = "red";
-          html += `<td style="color:${color}; font-weight:bold;">${value}</td>`;
-        }
-        else if(totalColumns.includes(c) && value !== ""){
-          let num = parseFloat(value.toString().replace(/,/g,""));
-          html += `<td>${!isNaN(num) ? num.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : value}</td>`;
-        } 
-        else {
-          html += `<td>${value}</td>`;
-        }
-      });
-        html += "</tr>";
-    });
-    // Totals row
-    html += "</tbody><tfoot><tr>";
-    selectedColumns.forEach(c => {
-      if(totalColumns.includes(c)){
-        html += `<td>${totals[c] ? totals[c].toLocaleString() : "0"}</td>`;
-      } else if(c === selectedColumns[0]){
-        html += "<td><b>Totals</b></td>";
-      } else {
-        html += "<td></td>";
-      }
-    });
-    html += "</tr></tfoot></table>";
-    html += `</div>`;  // 👈 cerrar table-wrapper
-
-    return html;
-  }
+  // Fila de totales
+  html += "</tbody><tfoot><tr>";
+  selectedColumns.forEach(c => {
+    if(totalColumns.includes(c)){
+      html += `<td><b>${totals[c] ? totals[c].toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}) : "0.00"}</b></td>`;
+    } else if(c === selectedColumns[0]){
+      html += "<td><b>Totals</b></td>";
+    } else {
+      html += "<td></td>";
+    }
+  });
+  html += "</tr></tfoot></table></div>";
+  return html;
+}
  
 // Total del Balance del primer grupo
   let totalFirstBalance = firstGroup.reduce((acc, row) => {
@@ -980,7 +959,27 @@ function exportExcel() {
   // Exporta como .xlsx
   XLSX.writeFile(wb, "Account_Statement.xlsx");
 }
+
+function filterColumn(input, columnName, tableTitle){
+  const filter = input.value.toLowerCase();
+  const tableBody = document.getElementById('body_' + tableTitle.replace(/\s+/g,'_'));
+  if(!tableBody) return;
   
+  const rows = tableBody.getElementsByTagName("tr");
+  const headers = tableBody.parentElement.querySelectorAll("th");
+  
+  // Buscar el índice de la columna correspondiente
+  const index = Array.from(headers).findIndex(th => th.textContent.includes(columnName));
+  if(index === -1) return;
+  
+  for(let row of rows){
+    const cell = row.getElementsByTagName("td")[index];
+    if(cell){
+      const textValue = cell.textContent || cell.innerText;
+      row.style.display = textValue.toLowerCase().includes(filter) ? "" : "none";
+    }
+  }
+}
 
   const today = new Date();
   const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
@@ -1009,10 +1008,11 @@ function exportExcel() {
       window.location.href = "about:blank"; 
     }
   }, 1000);
-     
+
 </script>
 </body>
 </html>
+
 
 
 
