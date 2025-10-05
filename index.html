@@ -36,37 +36,39 @@
       display: block;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start; /* login centrado, dataScreen arriba */
+      justify-content: flex-start; 
       min-height: 100vh;
     }
     #dataScreen {
-      display: none;            /* por defecto oculto */
-      flex-direction: column;   /* 👉 apila elementos en columna */
-      align-items: center;      /* 👉 centra el contenido */
+      display: none;           
+      flex-direction: column;  
+      align-items: center;     
       justify-content: flex-start;
       padding: 2rem;
       width: 100%;
       max-width: 100%;        
-      margin: 0 auto;           /* 👉 centra horizontalmente */
+      margin: 0 auto;           
       box-sizing: border-box;
     }
             
-    button{
-      font-family:'Outfit',sans-serif;
-      padding:1em 2em;
-      background:none;
-      border:2px solid #DDD;
-      font-size:14px;
-      color:#f22331;
-      cursor:pointer;
-      position:relative;
-      overflow:hidden;
-      transition:all 0.3s;
-      border-radius:12px;
-      background-color:#fff;
-      font-weight:bolder;
-      box-shadow:0 2px 0 2px #DDD;
+
+    button {
+      font-family: 'Outfit', sans-serif;
+      padding: 0.6em 1.4em;
+      background: none;
+      border: 2px solid #DDD;
+      font-size: 13px; 
+      color: #f22331;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s;
+      border-radius: 8px;
+      background-color: #fff;
+      font-weight: bold;
+      box-shadow: 0 2px 0 2px #DDD;
     }
+
     
     button:before{
       font-family:'Outfit',sans-serif;
@@ -112,7 +114,7 @@
     }
     th { background: #0600b6; color: white; }
     tfoot td {
-      font-size: 1.2rem;     /* aún más grande en totales */
+      font-size: 1.2rem;  
       font-weight: bold;
       background: #f9f9f9;
     }
@@ -138,8 +140,8 @@
 
     #companyFilter {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.5rem;          /* 👉 selector más grande */
-      padding: 10px 20px;         /* 👉 más altura y ancho */
+      font-size: 1.5rem;        
+      padding: 10px 20px;      
       border-radius: 8px;
       border: 1px solid #ccc;
       background: white;
@@ -160,18 +162,18 @@
     #legendAndInfo {
       display: flex;
       align-items: center;
-      justify-content: space-between; /* 👉 Burbujas izquierda, legend derecha */
+      justify-content: space-between; 
       margin: 0.5rem 0 1rem 0;
     }
 
     #infoBubbles {
       display: flex;
-      gap: 3px;   /* 👉 separación exacta de 3px */
+      gap: 3px;   
       flex-wrap: wrap;
       font-size: 1.5rem;
     }
     #overdueBubble {
-      background: #f7212e !important; /* rojo para overdue */
+      background: #f7212e !important; 
       color: white;
     }
     #legendContainer {
@@ -968,6 +970,7 @@ function exportExcel() {
 </script>
 </body>
 </html>
+
 
 
 
