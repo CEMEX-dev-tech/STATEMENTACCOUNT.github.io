@@ -359,6 +359,23 @@
     .loader:hover:after {
       animation: coin-flip 0.5s cubic-bezier(0.5, 0, 0.5, 1) infinite;
     }
+  
+    th:nth-child(13),
+    th:nth-child(14),
+    th:nth-child(15) {
+      background: #f22331 !important;
+      color: white !important;
+    }
+    
+    th:nth-child(13) input,
+    th:nth-child(14) input,
+    th:nth-child(15) input {
+      background: #fff4f4;
+      border: 1px solid #f22331;
+      color: #333;
+      border-radius: 4px;
+    }
+
     
     @keyframes coin-flip {
       0% { transform: rotateY(0deg); }
@@ -1095,6 +1112,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
