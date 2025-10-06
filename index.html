@@ -216,31 +216,30 @@
       font-style: italic;
       color: #444;
       border-top: 1px solid #ccc;
-      font-family: 'Outfit', sans-serif; /* 👉 Outfit aplicada */
+      font-family: 'Outfit', sans-serif;
     }
-    /* Contenedor responsivo */
+   
     .table-wrapper {
       width: 100%;
-      overflow-x: auto;   /* 👉 habilita scroll horizontal si la tabla no cabe */
-      -webkit-overflow-scrolling: touch; /* 👉 hace el scroll más suave en móviles */
+      overflow-x: auto;   
+      -webkit-overflow-scrolling: touch; 
       margin-top: 1rem;
       border-radius: 8px;
     }
-    
-    /* Ajustar tabla para ocupar el 100% del ancho */
+     
     table {
       width: 100%;
       border-collapse: collapse;
       font-size: 0.85rem;
     }
     
-    /* Para pantallas pequeñas */
+    
     @media screen and (max-width: 768px) {
       table {
-        font-size: 0.75rem; /* 👉 letras más pequeñas */
+        font-size: 0.75rem; 
       }
       th, td {
-        padding: 4px; /* 👉 celdas más compactas */
+        padding: 4px; 
       }
     }
     @keyframes fadeBlink {
@@ -277,7 +276,6 @@
       }
     }
 
-     
     @keyframes wave {
       0% { transform: rotate(0deg) skewX(0deg); }
       25% { transform: rotate(1deg) skewX(3deg); }
@@ -341,9 +339,9 @@
       transition: transform 1s ease-in-out;
     }
     
-    /* ✨ Gira solo al pasar el cursor */
+
     .loader:hover:after {
-      animation: coin-flip 2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+      animation: coin-flip 0.5s cubic-bezier(0.5, 0, 0.5, 1) infinite;
     }
     
     @keyframes coin-flip {
@@ -1080,6 +1078,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
