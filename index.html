@@ -429,7 +429,19 @@
         width: 80px !important;
       }
     }
-
+    h2 {
+      width: 100%;
+      text-align: center !important;
+      font-family: 'Outfit', sans-serif;
+      color: #0600b6;
+      font-weight: 700;
+      font-size: 1.8rem;
+      border-bottom: 3px solid #0600b6;
+      display: inline-block;
+      padding-bottom: 4px;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
   </style>
 </head>
 <body>
@@ -663,9 +675,7 @@
         `;
       }
     }
-  }
-  
-   
+  }   
   function goBack(){
     document.getElementById("dataScreen").style.display = "none";
     document.getElementById("loginScreen").style.display = "flex";
@@ -741,22 +751,7 @@ function renderSecondGroupTable(data, title) {
   let totals = {};
   secondGroupTotals.forEach(c => totals[c] = 0);
  
-  let html = `
-    <h2 style="
-      margin-top:2rem; 
-      margin-bottom:1rem; 
-      color:#0600b6; 
-      text-align:center; 
-      font-size:2rem; 
-      font-weight:700; 
-      font-family:'Outfit',sans-serif;
-      border-bottom:3px solid #0600b6; 
-      display:inline-block; 
-      padding-bottom:6px;
-    ">
-      ${title}
-    </h2>
-  `;
+  let html = `<h2> ${title}</h2>`;
   html += `<div class="table-wrapper"><table><thead><tr>`;
 
   secondGroupColumns.forEach(c => {
@@ -855,23 +850,7 @@ function renderTable(data, title) {
   totalColumns.forEach(c => totals[c] = 0);
 
   // Encabezado con filtros
-  let html = `
-    <h2 style="
-      margin-top:2rem; 
-      margin-bottom:1rem; 
-      color:#0600b6; 
-      text-align:center; 
-      font-size:2rem; 
-      font-weight:700; 
-      font-family:'Outfit',sans-serif;
-      border-bottom:3px solid #0600b6; 
-      display:inline-block; 
-      padding-bottom:6px;
-    ">
-      ${title}
-    </h2>
-  `;
-
+  let html = `<h2> ${title}</h2>`;
   html += `<div class="table-wrapper"><table><thead><tr>`;
 
   selectedColumns.forEach(c => {
@@ -1142,6 +1121,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
