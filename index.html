@@ -353,26 +353,23 @@
       border: 4px double;
       box-sizing: border-box;
       box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, .1);
-      animation: coin-flip 1s linear infinite;
+      animation: coin-flip 5s linear infinite;
     }
     
-    .loader:hover:after {
-      animation: coin-flip 2.5s cubic-bezier(1, 1, 1, 1) infinite;
-    }
-    
-    th:nth-child(13),
-    th:nth-child(14),
-    th:nth-child(15) {
-      background: #f22331 !important;
-      color: white !important;
-    }
-    
+   
     @keyframes coin-flip {
       0% { transform: rotateY(0deg); }
       50% { transform: rotateY(1800deg); }
       100% { transform: rotateY(3600deg); }
     }
 
+    
+    th:nth-child(13),
+    th:nth-child(14),
+    th:nth-child(15) {
+      background: #f22331 !important;
+      color: white !important;
+    }   
           
     @media screen and (max-width: 768px) {
       .welcome-title {
@@ -951,52 +948,60 @@ async function exportPDF() {
   }
 
   if (document.fonts && document.fonts.ready) {
-    try { await document.fonts.ready; } catch(e) {}
+    try { await document.fonts.ready; } catch (e) {}
   }
 
   const { jsPDF } = window.jspdf;
   const node = document.getElementById("dataScreen");
 
-  // 👇 Clonar el nodo para exportar con ancho fijo
+  // 👇 Clonar el nodo con un ancho más grande
   const clone = node.cloneNode(true);
-  clone.style.width = "3000px";   // 📌 fuerza un ancho grande
-  clone.style.maxWidth = "3000px";
+  clone.style.width = "3500px"; // ancho amplio para buena resolución
+  clone.style.maxWidth = "3500px";
   clone.style.position = "absolute";
   clone.style.left = "-9999px";
   document.body.appendChild(clone);
 
+  // 📸 Convertir a canvas con alta escala
   const canvas = await html2canvas(clone, {
-    scale: 2,
+    scale: 3,
     useCORS: true,
     backgroundColor: "#ffffff"
   });
 
-  document.body.removeChild(clone); // limpiar clon
+  document.body.removeChild(clone);
 
-  const imgData = canvas.toDataURL("image/jpeg", 0.7); // 0.7 = calidad (0 a 1)
-  const pdf = new jsPDF({ orientation: "landscape", unit: "pt", format: "a3" }); // 📌 usa A3
+  // 📄 Convertir a PDF (formato extra largo)
+  const imgData = canvas.toDataURL("image/jpeg", 0.9);
+  const pdf = new jsPDF({
+    orientation: "portrait",      // Vertical (para largo)
+    unit: "pt",
+    format: [2380, 5000]          // formato personalizado: ancho A3, alto extendido
+  });
 
   const pdfW = pdf.internal.pageSize.getWidth();
   const pdfH = pdf.internal.pageSize.getHeight();
-
   const imgW = pdfW;
   const imgH = canvas.height * (imgW / canvas.width);
 
   let heightLeft = imgH;
   let position = 0;
 
-  pdf.addImage(imgData, "PNG", 0, position, imgW, imgH);
+  // Primera página
+  pdf.addImage(imgData, "JPEG", 0, position, imgW, imgH);
   heightLeft -= pdfH;
 
+  // Agregar páginas si sobra contenido
   while (heightLeft > 0) {
     position = heightLeft - imgH;
-    pdf.addPage();
-    pdf.addImage(imgData, "PNG", 0, position, imgW, imgH);
+    pdf.addPage([2380, 5000]);
+    pdf.addImage(imgData, "JPEG", 0, position, imgW, imgH);
     heightLeft -= pdfH;
   }
 
-  pdf.save("Account_Statement.pdf");
+  pdf.save("Account_Statement_Large.pdf");
 }
+
   
 function exportExcel() {
   if (currentCustomerRows.length === 0) {
@@ -1095,6 +1100,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
