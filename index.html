@@ -577,7 +577,7 @@
 
   const selectedColumns = [
     "BRANCH",
-    "NAME BRANCH",
+    "BRANCH NAME",
     "DIVISION",
     "DOC.TYPE",
     "# DOCUMENT",
@@ -945,18 +945,14 @@ function renderTable(data, title) {
           <td style="padding:6px 12px; text-align:center;">Credit Balance</td>
           <td style="padding:6px 12px; text-align:center;">$${totalSecondBalance.toLocaleString()}</td>
         </tr>
-        <tr>
-          <td style="padding:6px 12px; text-align:center;">Coverage to overdue (Payment / Overdue)</td>
-          <td style="padding:6px 12px; text-align:center;">${(coverage * 100).toFixed(2)}%</td>
-        </tr>
       </table>
     </div>
   `;
 
   // Renderizar tablas debajo
   container.innerHTML = "";
-  container.innerHTML += renderTable(firstGroup,"Detail of Returned Cheques, Invoices, and Debit Notes");
-  container.innerHTML += renderSecondGroupTable(secondGroup,"Pending to applied");
+  container.innerHTML += renderTable(firstGroup,"BALANCES");
+  container.innerHTML += renderSecondGroupTable(secondGroup,"PAYMENT - CREDIT BALANCE");
 }
   
 async function exportPDF() {
@@ -1110,6 +1106,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
