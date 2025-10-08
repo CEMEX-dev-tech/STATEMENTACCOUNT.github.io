@@ -1090,11 +1090,10 @@ function filterColumn(input, columnName, tableTitle) {
     }
   });
 }
-  const today = new Date();
-  const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
-  document.getElementById("currentDate").textContent = today.toLocaleDateString("en-GB", options);
 
- 
+  const lastUpdate = "08/10/2025"; // <-- cámbiala cada vez que actualices el CSV
+  document.getElementById("currentDate").textContent = lastUpdate;
+    
   window.oncontextmenu = () => false; 
   document.addEventListener("keydown", e => {
     if (
@@ -1121,6 +1120,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
