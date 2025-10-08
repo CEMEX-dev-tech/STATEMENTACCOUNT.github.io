@@ -359,20 +359,12 @@
     .loader:hover:after {
       animation: coin-flip 2.5s cubic-bezier(0.5, 0, 0.5, 1) infinite;
   
+    
     th:nth-child(13),
     th:nth-child(14),
     th:nth-child(15) {
       background: #f22331 !important;
       color: white !important;
-    }
-    
-    th:nth-child(13) input,
-    th:nth-child(14) input,
-    th:nth-child(15) input {
-      background: #fff4f4;
-      border: 1px solid #f22331;
-      color: #333;
-      border-radius: 4px;
     }
     
     @keyframes coin-flip {
@@ -476,16 +468,13 @@
         Invalid credentials. Try again.
       </p>
       <div class="ribbon-container">
-        <div class="ribbon">
-          Need assistance? Contact us:
-          <a href="mailto:creditandcollection.tcl@cemex.com">
-            creditandcollection.tcl@cemex.com
-          </a>
+        <div class="ribbon">        
+          For further assistance, please reach out to your assigned sales representative 💼    
         </div>
       </div>        
-    </div> <!-- ✅ fin de loginScreen -->
+    </div> 
 
-    <!-- Screen 2: Data View -->
+
     <div class="screen" id="dataScreen">
 
       <img src="Picture11.png" alt="Logo" style="max-width:700px; display:block; margin:0 auto;">
@@ -527,10 +516,7 @@
       
       <div style="display:flex; align-items:center; justify-content:center; gap:20px; margin-bottom:10px;">
         <div style="color:#0600b6; font-family:'Outfit', sans-serif; font-weight:bold; font-size:1.7rem; white-space:nowrap; animation:fadeBlink 2s infinite;">
-          Need assistance? Contact us: 
-          <a href="mailto:creditandcollection.tcl@cemex.com" style="color:#0600b6; text-decoration:none;">
-            creditandcollection.tcl@cemex.com
-          </a>
+          For further assistance, please reach out to your assigned sales representative 💼
         </div>
       </div>
 
@@ -663,11 +649,8 @@
         // ❌ Bloqueo total tras 3 intentos
         document.getElementById("loginScreen").innerHTML = `
           <div class="ribbon" style="margin-top:200px; animation:none; text-align:center; font-size:1.8rem; padding:30px 60px;">
-            Access blocked after 3 failed attempts.<br><br>
-            Need assistance? Contact us: 
-            <a href="mailto:creditandcollection.tcl@cemex.com" style="color:white; text-decoration:none;">
-              creditandcollection.tcl@cemex.com
-            </a>
+            Access blocked after 3 failed attempts.<br><br>           
+            For further assistance, please reach out to your assigned sales representative 💼      
           </div>
         `;
       }
@@ -945,6 +928,12 @@ function renderTable(data, title) {
           <td style="padding:6px 12px; text-align:center;">Credit Balance</td>
           <td style="padding:6px 12px; text-align:center;">$${totalSecondBalance.toLocaleString()}</td>
         </tr>
+        <tr>
+          <td style="padding:6px 12px; font-weight:bold; color:#0600b6; text-align:center;">Net Portfolio</td>
+          <td style="padding:6px 12px; font-weight:bold; color:#0600b6; text-align:center;">
+            $${(totalFirstBalance + totalSecondBalance).toLocaleString()}
+          </td>
+        </tr>
       </table>
     </div>
   `;
@@ -1106,6 +1095,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
