@@ -740,8 +740,23 @@ function renderSecondGroupTable(data, title) {
 
   let totals = {};
   secondGroupTotals.forEach(c => totals[c] = 0);
-
-  let html = `<h2 style="margin-top:2rem; color:#0600b6;">${title}</h2>`;
+ 
+  let html = `
+    <h2 style="
+      margin-top:2rem; 
+      margin-bottom:1rem; 
+      color:#0600b6; 
+      text-align:center; 
+      font-size:2rem; 
+      font-weight:700; 
+      font-family:'Outfit',sans-serif;
+      border-bottom:3px solid #0600b6; 
+      display:inline-block; 
+      padding-bottom:6px;
+    ">
+      ${title}
+    </h2>
+  `;
   html += `<div class="table-wrapper"><table><thead><tr>`;
 
   secondGroupColumns.forEach(c => {
@@ -840,7 +855,23 @@ function renderTable(data, title) {
   totalColumns.forEach(c => totals[c] = 0);
 
   // Encabezado con filtros
-  let html = `<h2 style="margin-top:2rem; color:#0600b6;">${title}</h2>`;
+  let html = `
+    <h2 style="
+      margin-top:2rem; 
+      margin-bottom:1rem; 
+      color:#0600b6; 
+      text-align:center; 
+      font-size:2rem; 
+      font-weight:700; 
+      font-family:'Outfit',sans-serif;
+      border-bottom:3px solid #0600b6; 
+      display:inline-block; 
+      padding-bottom:6px;
+    ">
+      ${title}
+    </h2>
+  `;
+
   html += `<div class="table-wrapper"><table><thead><tr>`;
 
   selectedColumns.forEach(c => {
@@ -916,9 +947,9 @@ function renderTable(data, title) {
         font-family:'Outfit',sans-serif; 
         font-size:1.5rem; 
         min-width:400px;
-        border-radius:12px;   /* 🔹 esquinas redondeadas */
-        overflow:hidden;      /* 🔹 asegura que el contenido siga el borde redondeado */
-        box-shadow:0 2px 6px rgba(0,0,0,0.15); /* opcional: sombra ligera */
+        border-radius:12px;   
+        overflow:hidden;      
+        box-shadow:0 2px 6px rgba(0,0,0,0.15);
       ">
         <tr>
           <th style="background:#0600b6; color:white; padding:6px 12px; text-align:center;">Metric</th>
@@ -1111,6 +1142,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
