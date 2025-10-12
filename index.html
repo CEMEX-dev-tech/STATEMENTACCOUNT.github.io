@@ -9,13 +9,20 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+    }    
     body {
       font-family: 'Outfit', sans-serif;
+      display: flex;                
+      align-items: center;          
+      justify-content: center;     
+      zoom: 0.6;                    
       min-height: 100vh;
-      margin: 0;
-      zoom: 0.6;     
+      box-sizing: border-box;
     }
-
     .background {
       position: fixed; 
       top: 0;
@@ -217,15 +224,18 @@
       border-radius: 10px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.15);
     }
+
+
     #loginScreen {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
-      min-height: 100vh;
+      height: 100vh; 
+      padding: 0; 
+      box-sizing: border-box;
     }
-
     .legend-box {
       display: inline-block;
       width: 14px;
@@ -1126,6 +1136,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
