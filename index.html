@@ -385,49 +385,55 @@
     @media screen and (max-width: 768px) {
       .welcome-title {
         font-size: 2.2rem;
-      }
-      #loginScreen input {
+    }
+    #loginScreen input {
         width: 80% !important;
         font-size: 1.3rem !important;
-      }
-      button {
+    }
+    button {
         font-size: 1rem !important;
         padding: 0.7em 1.4em !important;
-      }
-      #dataScreen h1 {
+    }
+    #dataScreen h1 {
         font-size: 1.8rem;
         text-align: center;
-      }
-      .table-wrapper {
-        overflow-x: scroll;
-      }
-      table {
+    }
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;      /* ✅ fuerza scroll horizontal */
+        -webkit-overflow-scrolling: touch; /* ✅ desplazamiento suave en iOS */
+    }
+      
+    .table-wrapper table {
+        min-width: 1200px;     /* ✅ asegura que la tabla sea más ancha que la pantalla */
+    }
+    table {
         min-width: 600px;
         font-size: 0.8rem;
-      }
-      th, td {
+    }
+    th, td {
         padding: 4px;
-      }
-      .ribbon {
+    }
+    .ribbon {
         font-size: 1rem;
         padding: 8px 15px;
         line-height: 1.4;
         white-space: normal;
-      }
+    }
       /* Botones finales apilados */
-      #dataScreen div[style*="justify-content:center"] {
+    #dataScreen div[style*="justify-content:center"] {
         flex-direction: column;
         align-items: center;
-      }
-      #dataScreen button {
+    }
+    #dataScreen button {
         width: 70% !important;
         height: 45px !important;
         font-size: 1.2rem !important;
-      }
-      table input[type="text"] {
+    }
+    table input[type="text"] {
         font-size: 0.8rem !important;
         width: 80px !important;
-      }
+    }
     }
     h2 {
       width: 100%;
@@ -498,8 +504,7 @@
     <div class="screen" id="dataScreen">
 
       <img src="Picture11.png" alt="Logo" style="max-width:700px; display:block; margin:0 auto;">
-      <h1 style="text-align:center; color:#0600b6;">ACCOUNT STATEMENT</h1>
-
+      <h1 style="text-align:center; color:#0600b6; margin-bottom: 1rem;">ACCOUNT STATEMENT</h1>
       <div id="balanceBubble" style="display:none;">Total Balance: $0</div>
 
       <div id="filterBox">
@@ -665,7 +670,7 @@
       loginAttempts++;
       document.getElementById("errorMsg").style.display = "block";
 
-      if (attempts >= 3) {
+      if (loginAttempts >= 3) {
         // ❌ Bloqueo total tras 3 intentos
         document.getElementById("loginScreen").innerHTML = `
           <div class="ribbon" style="margin-top:200px; animation:none; text-align:center; font-size:1.8rem; padding:30px 60px;">
@@ -1120,6 +1125,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
