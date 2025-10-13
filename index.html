@@ -59,22 +59,22 @@
       justify-content: flex-start; 
       min-height: 100vh;
     }
-    #dataScreen {     
+    #dataScreen {
       display: none;
       flex-direction: column;
       align-items: center;
-      justify-content: center; /* ✅ centrado vertical y horizontal */
-      position: absolute;      /* ✅ asegura centrado dentro del viewport */
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%); /* ✅ centra completamente */
-      width: 100vw;
-      height: 100vh;
+      justify-content: flex-start; /* ✅ contenido desde arriba */
+      position: fixed;             /* ✅ ocupa toda la ventana */
+      top: 0;
+      left: 0;
+      width: 100vw;                /* ✅ 100% ancho */
+      height: 100vh;               /* ✅ 100% alto */
       padding: 2rem 4rem;
       background: #ffffff;
-      overflow-y: auto;
+      overflow-y: auto;            /* ✅ scroll si hay mucho contenido */
       overflow-x: hidden;
       box-sizing: border-box;
+      z-index: 10;                 /* ✅ asegura que esté visible sobre el fondo */
     }
     button {
       font-family: 'Outfit', sans-serif;
@@ -1137,6 +1137,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
