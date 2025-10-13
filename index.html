@@ -28,25 +28,34 @@
       overflow-x: hidden;      /* ✅ evita scroll lateral */
       zoom: 0.9;               /* 🔹 leve zoom global si quieres mantener proporciones */
     }
-    
-    #dataScreen {
-      display: flex;
-      flex-direction: column;
-      align-items: center;       /* ✅ centra horizontalmente */
-      justify-content: center;   /* ✅ centra verticalmente */
+    .screen {
+      display: none; /* Por defecto todo oculto */
+      position: relative;
       width: 100vw;
-      min-height: 100vh;         /* ✅ ocupa toda la pantalla */
+      height: 100vh;
+      padding: 4rem 6rem;
+      background: #ffffff;
+      overflow-y: auto;
+      box-sizing: border-box;
+    }
+    .screen.active {
+      display: flex;
+    }
+    #dataScreen {
+      display: none;                /* ✅ oculto al iniciar */
+      flex-direction: column;
+      align-items: center;          /* ✅ centra horizontalmente */
+      justify-content: center;      /* ✅ centra verticalmente */
+      position: relative;
+      width: 100vw;
+      height: 100vh;                /* ✅ ocupa toda la pantalla */
       background: #ffffff;
       padding: 4rem 6rem;
       box-sizing: border-box;
       text-align: center;
-      overflow-y: auto;          /* ✅ scroll si hay mucho contenido */
+      overflow-y: auto;             /* ✅ scroll si el contenido crece */
       overflow-x: hidden;
       z-index: 10;
-    }
-    
-    /* Pequeña animación opcional para transición suave */
-    #dataScreen {
       opacity: 0;
       animation: fadeIn 0.6s ease forwards;
     }
@@ -500,8 +509,8 @@
       </div>        
     </div> 
 
+    <div class="screen" id="dataScreen" style="display:none;">
 
-    <div class="screen" id="dataScreen">
 
       <img src="Picture11.png" alt="Logo" style="max-width:700px; display:block; margin:0 auto;">
       <h1 style="text-align:center; color:#0600b6; margin-bottom: 1rem;">ACCOUNT STATEMENT</h1>
@@ -665,6 +674,7 @@
       // Ocultar login y mostrar dataScreen
       document.getElementById("loginScreen").style.display = "none";
       document.getElementById("dataScreen").style.display = "flex";
+      document.getElementById("dataScreen").scrollTop = 0; // ✅ asegura vista al inicio
     } else {
       // ❌ Si el código es incorrecto
       loginAttempts++;
@@ -1125,6 +1135,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
