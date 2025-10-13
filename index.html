@@ -63,17 +63,19 @@
       display: none;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: center;       /* ✅ centra verticalmente el contenido */
       position: relative;
-      width: 120%;                         /* 🔹 más ancho que el viewport */
-      min-height: 180vh;                   /* 🔹 más alto que el viewport */
-      padding: 5rem 10rem;
+      width: 100%;
+      min-height: 120vh;             /* 🔹 da más altura visual */
+      padding: 4rem 8rem;            /* 🔹 más espacio interno */
       background: #ffffff;
-      overflow-y: auto;
-      overflow-x: auto;                    /* ✅ permite scroll lateral si hay tablas anchas */
+      overflow-y: auto;              /* ✅ scroll si el contenido crece */
+      overflow-x: hidden;
       box-sizing: border-box;
       z-index: 10;
       text-align: center;
+      justify-content: flex-start;
+      padding-top: 10vh; /* 🔹 baja visualmente todo el contenido */
     }
     #tableContainer {
       width: 90%;
@@ -1145,6 +1147,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
