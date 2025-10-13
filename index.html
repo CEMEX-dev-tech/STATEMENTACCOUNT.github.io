@@ -24,7 +24,7 @@
       align-items: center;
       justify-content: center;
       overflow: hidden;
-      zoom: 0.5;
+      zoom: 0.8;
     }
     .background {
       position: fixed;
@@ -62,21 +62,18 @@
     #dataScreen {
       display: none;
       flex-direction: column;
-      align-items: center;        
-      justify-content: center;     /* ✅ centra vertical y horizontal */
-      position: absolute;          
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%); /* ✅ centra completamente en el viewport */
-      width: 100vw;               
-      height: 100vh;              
-      padding: 2rem 4rem;
+      align-items: center;
+      justify-content: flex-start;
+      position: relative;
+      width: 120%;                         /* 🔹 más ancho que el viewport */
+      min-height: 180vh;                   /* 🔹 más alto que el viewport */
+      padding: 5rem 10rem;
       background: #ffffff;
       overflow-y: auto;
-      overflow-x: hidden;
+      overflow-x: auto;                    /* ✅ permite scroll lateral si hay tablas anchas */
       box-sizing: border-box;
       z-index: 10;
-      text-align: center;     
+      text-align: center;
     }
     #tableContainer {
       width: 90%;
@@ -1148,6 +1145,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
