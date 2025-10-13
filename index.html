@@ -37,20 +37,16 @@
     }   
     .screen {
       display: none;
-      background: rgba(255, 255, 255, 0.95);
-      padding: 4rem 6rem;
-      border-radius: 20px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-      width: 70%;
-      max-width: 900px;
-      min-height: 400px;
-      box-sizing: border-box;    
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-    
+      position: relative;
+      width: 100vw;          
+      height: 100vh;         
+      padding: 4rem 6rem;     
+      background: #ffffff;   
+      border-radius: 0;      
+      box-shadow: none;      
+      box-sizing: border-box;
+      overflow-y: auto;       
+    }    
     .screen.active {
       display: block;
       background: rgba(255,255,255,0.9);
@@ -240,7 +236,6 @@
       justify-content: center;
       text-align: center;
       height: 100vh;
-      padding: 0;
     }
     .legend-box {
       display: inline-block;
