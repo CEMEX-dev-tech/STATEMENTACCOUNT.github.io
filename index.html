@@ -35,17 +35,20 @@
     #app {
       width: 100%;
     }   
-
     .screen {
       display: none;
       background: rgba(255, 255, 255, 0.95);
-      padding: 4rem 6rem;       
-      border-radius: 20px; 
+      padding: 4rem 6rem;
+      border-radius: 20px;
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-      width: 70%;                 
-      max-width: 900px;            
-      min-height: 400px;          
-      box-sizing: border-box;
+      width: 70%;
+      max-width: 900px;
+      min-height: 400px;
+      box-sizing: border-box;    
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
     
     .screen.active {
@@ -467,7 +470,7 @@
 <body>
   <div class="background"></div>
   <div id="app"> 
-    <!-- Screen 1: Login -->
+    
     <div class="screen active" id="loginScreen">
       
       <div class="loader"></div>
@@ -1139,6 +1142,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
