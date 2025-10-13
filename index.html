@@ -63,18 +63,28 @@
       display: none;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start; /* ✅ contenido desde arriba */
-      position: fixed;             /* ✅ ocupa toda la ventana */
+      justify-content: flex-start;
+      position: fixed;
       top: 0;
       left: 0;
-      width: 100vw;                /* ✅ 100% ancho */
-      height: 100vh;               /* ✅ 100% alto */
+      width: 100vw;
+      height: 100vh;
       padding: 2rem 4rem;
       background: #ffffff;
-      overflow-y: auto;            /* ✅ scroll si hay mucho contenido */
+      overflow-y: auto;
       overflow-x: hidden;
       box-sizing: border-box;
-      z-index: 10;                 /* ✅ asegura que esté visible sobre el fondo */
+      z-index: 10;
+      text-align: center;        /* ✅ centra los textos */
+    }
+    #tableContainer {
+      width: 90%;
+      margin: 0 auto;            /* ✅ centra horizontalmente las tablas */
+      display: flex;
+      flex-direction: column;
+      align-items: center;       /* ✅ centra los elementos hijos */
+      justify-content: center;
+      text-align: center;
     }
     button {
       font-family: 'Outfit', sans-serif;
@@ -1137,6 +1147,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
