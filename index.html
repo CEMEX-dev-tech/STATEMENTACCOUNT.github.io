@@ -13,10 +13,10 @@
       height: 100%;
       margin: 0;
       padding: 0;
-      overflow: hidden; /* ✅ elimina cualquier espacio por scroll lateral o inferior */
+      overflow: hidden; /* evita desbordamiento lateral del body */
     }
     
-     body {
+    body {
       font-family: 'Outfit', sans-serif;
       width: 100%;
       height: 100%;
@@ -25,7 +25,6 @@
       align-items: center;
       justify-content: center;
       box-sizing: border-box;
-      overflow: hidden; /* ✅ evita que el scroll cause margen lateral */
       zoom: 0.9;
     }
     .screen {
@@ -47,15 +46,15 @@
       align-items: center;
       justify-content: center;
       position: relative;
-      width: 100%;        /* ✅ reemplaza 100vw → elimina el overflow lateral */
-      height: 100%;       /* ✅ reemplaza min-height → ocupa todo el alto visible */
+      width: 100%;
+      height: 100%;
       background: #ffffff;
-      padding: 0;         /* ✅ elimina márgenes internos innecesarios */
+      padding: 0;
       margin: 0;
       box-sizing: border-box;
       text-align: center;
-      overflow-y: auto;   /* ✅ scroll vertical solo dentro del área visible */
-      overflow-x: hidden;
+      overflow-y: auto;   /* ✅ scroll vertical activado */
+      overflow-x: hidden; /* ✅ sin scroll lateral */
       z-index: 10;
       opacity: 0;
       animation: fadeIn 0.6s ease forwards;
@@ -1136,6 +1135,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
