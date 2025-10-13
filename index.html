@@ -12,21 +12,21 @@
     html, body {
       height: 100%;
       margin: 0;
+      padding: 0;
+      overflow: hidden; /* ✅ elimina cualquier espacio por scroll lateral o inferior */
     }
     
-    body {
+     body {
       font-family: 'Outfit', sans-serif;
-      height: 100vh;
-      width: 100vw;
-      margin: 0;
-      box-sizing: border-box;
+      width: 100%;
+      height: 100%;
       background: #ffffff;
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow-y: auto;        /* ✅ habilita scroll vertical */
-      overflow-x: hidden;      /* ✅ evita scroll lateral */
-      zoom: 0.9;               /* 🔹 leve zoom global si quieres mantener proporciones */
+      box-sizing: border-box;
+      overflow: hidden; /* ✅ evita que el scroll cause margen lateral */
+      zoom: 0.9;
     }
     .screen {
       display: none; /* Por defecto todo oculto */
@@ -42,18 +42,19 @@
       display: flex;
     }
     #dataScreen {
-      display: none;                /* ✅ oculto al iniciar */
+      display: none;
       flex-direction: column;
-      align-items: center;          /* ✅ centra horizontalmente */
-      justify-content: center;      /* ✅ centra verticalmente */
+      align-items: center;
+      justify-content: center;
       position: relative;
-      width: 100vw;
-      height: 100vh;                /* ✅ ocupa toda la pantalla */
+      width: 100%;        /* ✅ reemplaza 100vw → elimina el overflow lateral */
+      height: 100%;       /* ✅ reemplaza min-height → ocupa todo el alto visible */
       background: #ffffff;
-      padding: 4rem 6rem;
+      padding: 0;         /* ✅ elimina márgenes internos innecesarios */
+      margin: 0;
       box-sizing: border-box;
       text-align: center;
-      overflow-y: auto;             /* ✅ scroll si el contenido crece */
+      overflow-y: auto;   /* ✅ scroll vertical solo dentro del área visible */
       overflow-x: hidden;
       z-index: 10;
       opacity: 0;
@@ -1135,6 +1136,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
