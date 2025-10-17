@@ -985,79 +985,62 @@ async function exportPDF() {
   const { jsPDF } = window.jspdf;
   const node = document.getElementById("dataScreen");
 
-  // Esperar fuentes cargadas (por seguridad)
+  // Esperar que las fuentes estén listas
   if (document.fonts && document.fonts.ready) {
     try { await document.fonts.ready; } catch (e) {}
   }
 
-  // 💡 Mostrar un mensaje temporal mientras se genera
-  const oldHTML = node.innerHTML;
+  // Mostrar mensaje temporal
   const loadingMsg = document.createElement("div");
   loadingMsg.textContent = "Generating PDF, please wait...";
-  loadingMsg.style.position = "fixed";
-  loadingMsg.style.top = "50%";
-  loadingMsg.style.left = "50%";
-  loadingMsg.style.transform = "translate(-50%, -50%)";
-  loadingMsg.style.background = "rgba(255,255,255,0.95)";
-  loadingMsg.style.padding = "20px 40px";
-  loadingMsg.style.borderRadius = "10px";
-  loadingMsg.style.fontFamily = "Outfit, sans-serif";
-  loadingMsg.style.fontSize = "1.5rem";
-  loadingMsg.style.zIndex = "9999";
+  Object.assign(loadingMsg.style, {
+    position: "fixed",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    background: "rgba(255,255,255,0.95)",
+    padding: "20px 40px",
+    borderRadius: "10px",
+    fontFamily: "Outfit, sans-serif",
+    fontSize: "1.5rem",
+    zIndex: "9999"
+  });
   document.body.appendChild(loadingMsg);
 
-  // 👇 Clonar el nodo para evitar interferencias visuales
+  // Clonar el nodo a exportar
   const clone = node.cloneNode(true);
   clone.style.position = "absolute";
   clone.style.left = "-9999px";
   clone.style.top = "0";
-  clone.style.width = "1200px"; // ancho ideal para PDFs
-  clone.style.maxWidth = "1200px";
+  clone.style.width = "1500px"; // más ancho para capturar correctamente tablas grandes
   document.body.appendChild(clone);
 
-  // 📸 Generar canvas de alta calidad
+  // Generar imagen con buena escala
   const canvas = await html2canvas(clone, {
-    scale: 2,            // alta resolución sin exagerar
+    scale: 3,
     useCORS: true,
     backgroundColor: "#ffffff",
-    logging: false
+    logging: false,
+    windowWidth: clone.scrollWidth,
+    windowHeight: clone.scrollHeight
   });
 
+  // Limpieza
   document.body.removeChild(clone);
   document.body.removeChild(loadingMsg);
 
-  // 📄 Crear PDF en formato A4 vertical
+  // Crear PDF con formato automático (alto dinámico)
+  const imgData = canvas.toDataURL("image/png", 1.0);
   const pdf = new jsPDF({
-    orientation: "portrait",
-    unit: "pt",
-    format: "a4"
+    orientation: "portrait", // cambia a "landscape" si lo quieres horizontal
+    unit: "px",
+    format: [canvas.width, canvas.height] // ✅ se adapta al contenido real
   });
 
-  const imgData = canvas.toDataURL("image/jpeg", 0.95);
-  const pdfWidth = pdf.internal.pageSize.getWidth();
-  const pdfHeight = pdf.internal.pageSize.getHeight();
-
-  const imgWidth = pdfWidth;
-  const imgHeight = (canvas.height * pdfWidth) / canvas.width;
-
-  let heightLeft = imgHeight;
-  let position = 0;
-
-  // Primera página
-  pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
-  heightLeft -= pdfHeight;
-
-  // Agregar páginas adicionales si sobra contenido
-  while (heightLeft > 0) {
-    position -= pdfHeight;
-    pdf.addPage();
-    pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
-    heightLeft -= pdfHeight;
-  }
-
-  // ✅ Guardar archivo final
+  pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
   pdf.save("Account_Statement.pdf");
 }
+
 
 
   
@@ -1157,6 +1140,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
