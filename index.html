@@ -981,69 +981,53 @@ function renderTable(data, title) {
   container.innerHTML += renderSecondGroupTable(secondGroup,"PAYMENT - CREDIT BALANCE");
 }
   
-async function exportPDF() {
-  const node = document.getElementById("dataScreen");
 
-  // Esperar que las fuentes estén listas
-  if (document.fonts && document.fonts.ready) {
-    try { await document.fonts.ready; } catch (e) {}
+async function exportPDF() {
+  const { jsPDF } = window.jspdf;
+
+  // Selecciona el área que quieres exportar
+  const element = document.getElementById("dataScreen");
+  if (!element) {
+    alert("Error: dataScreen no encontrado.");
+    return;
   }
 
-  // Mostrar mensaje de carga
+  // Muestra un mensaje mientras se genera
+  const originalText = element.innerHTML;
   const loadingMsg = document.createElement("div");
-  loadingMsg.textContent = "Capturing image, please wait...";
-  Object.assign(loadingMsg.style, {
-    position: "fixed",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    background: "rgba(255,255,255,0.95)",
-    padding: "20px 40px",
-    borderRadius: "10px",
-    fontFamily: "Outfit, sans-serif",
-    fontSize: "1.5rem",
-    zIndex: "9999"
-  });
-  document.body.appendChild(loadingMsg);
+  loadingMsg.textContent = "⏳ Generando PDF, por favor espera...";
+  loadingMsg.style.fontSize = "2rem";
+  loadingMsg.style.color = "#0600b6";
+  loadingMsg.style.textAlign = "center";
+  loadingMsg.style.marginTop = "20px";
+  element.prepend(loadingMsg);
 
-  // Clonar para asegurar consistencia de estilos
-  const clone = node.cloneNode(true);
-  clone.style.position = "absolute";
-  clone.style.left = "-9999px";
-  clone.style.top = "0";
-  clone.style.width = "1600px"; // 📏 más ancho para alta resolución
-  clone.style.background = "#ffffff";
-  document.body.appendChild(clone);
+  try {
+    // Renderiza toda el área visible (con más resolución)
+    const canvas = await html2canvas(element, {
+      scale: 3, // Aumenta resolución
+      useCORS: true,
+      backgroundColor: "#ffffff"
+    });
 
-  // Captura con alta escala
-  const canvas = await html2canvas(clone, {
-    scale: 3, // 📸 alta calidad
-    useCORS: true,
-    backgroundColor: "#ffffff",
-    logging: false,
-    windowWidth: clone.scrollWidth,
-    windowHeight: clone.scrollHeight
-  });
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF({
+      orientation: "portrait",
+      unit: "px",
+      format: [canvas.width, canvas.height]
+    });
 
-  // Limpieza
-  document.body.removeChild(clone);
-  document.body.removeChild(loadingMsg);
+    // Ajusta la imagen a una sola página del tamaño del contenido
+    pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
 
-  // Convertir a imagen y descargar
-  const imageData = canvas.toDataURL("image/png", 1.0);
-  const link = document.createElement("a");
-  link.href = imageData;
-  link.download = "Account_Statement.png";
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-
-  alert("✅ Image exported successfully!");
+    pdf.save("Account_Statement.pdf");
+  } catch (error) {
+    console.error("Error al exportar PDF:", error);
+    alert("Error al generar el PDF. Intenta nuevamente.");
+  } finally {
+    loadingMsg.remove();
+  }
 }
-
-
-
-
   
 function exportExcel() {
   if (currentCustomerRows.length === 0) {
@@ -1141,6 +1125,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
