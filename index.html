@@ -979,21 +979,18 @@ function renderTable(data, title) {
   container.innerHTML = "";
   container.innerHTML += renderTable(firstGroup,"BALANCES");
   container.innerHTML += renderSecondGroupTable(secondGroup,"PAYMENT - CREDIT BALANCE");
-}
-  
+}  
 
 async function exportPDF() {
   const { jsPDF } = window.jspdf;
-
-  // Selecciona el área que quieres exportar
   const element = document.getElementById("dataScreen");
+
   if (!element) {
-    alert("Error: dataScreen no encontrado.");
+    alert("No se encontró el contenido para exportar.");
     return;
   }
 
-  // Muestra un mensaje mientras se genera
-  const originalText = element.innerHTML;
+  // Mostrar mensaje temporal
   const loadingMsg = document.createElement("div");
   loadingMsg.textContent = "⏳ Generando PDF, por favor espera...";
   loadingMsg.style.fontSize = "2rem";
@@ -1003,27 +1000,40 @@ async function exportPDF() {
   element.prepend(loadingMsg);
 
   try {
-    // Renderiza toda el área visible (con más resolución)
     const canvas = await html2canvas(element, {
-      scale: 3, // Aumenta resolución
+      scale: 2, // buena calidad sin exagerar
       useCORS: true,
-      backgroundColor: "#ffffff"
+      backgroundColor: "#ffffff",
+      scrollY: -window.scrollY
     });
 
     const imgData = canvas.toDataURL("image/png");
-    const pdf = new jsPDF({
-      orientation: "portrait",
-      unit: "px",
-      format: [canvas.width, canvas.height]
-    });
+    const pdf = new jsPDF("p", "mm", "a4");
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
 
-    // Ajusta la imagen a una sola página del tamaño del contenido
-    pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
+    const imgWidth = pageWidth;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+    let position = 0;
+    let heightLeft = imgHeight;
+
+    // Agregar primera página
+    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+
+    // Agregar más páginas si el contenido excede una hoja
+    while (heightLeft > 0) {
+      position = heightLeft - imgHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+    }
 
     pdf.save("Account_Statement.pdf");
-  } catch (error) {
-    console.error("Error al exportar PDF:", error);
-    alert("Error al generar el PDF. Intenta nuevamente.");
+  } catch (err) {
+    console.error("❌ Error generando PDF:", err);
+    alert("Ocurrió un error al generar el PDF.");
   } finally {
     loadingMsg.remove();
   }
@@ -1096,7 +1106,7 @@ function filterColumn(input, columnName, tableTitle) {
   });
 }
 
-  const lastUpdate = "12/10/2025"; // <-- cámbiala cada vez que actualices el CSV
+  const lastUpdate = "17/10/2025"; // <-- cámbiala cada vez que actualices el CSV
   document.getElementById("currentDate").textContent = lastUpdate;
     
   window.oncontextmenu = () => false; 
@@ -1125,6 +1135,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
