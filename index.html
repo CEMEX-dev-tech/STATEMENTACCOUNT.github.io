@@ -982,17 +982,16 @@ function renderTable(data, title) {
 }
   
 async function exportPDF() {
-  const { jsPDF } = window.jspdf;
   const node = document.getElementById("dataScreen");
 
-  // Esperar fuentes
+  // Esperar que las fuentes estén listas
   if (document.fonts && document.fonts.ready) {
     try { await document.fonts.ready; } catch (e) {}
   }
 
-  // Mostrar mensaje temporal
+  // Mostrar mensaje de carga
   const loadingMsg = document.createElement("div");
-  loadingMsg.textContent = "Generating PDF, please wait...";
+  loadingMsg.textContent = "Capturing image, please wait...";
   Object.assign(loadingMsg.style, {
     position: "fixed",
     top: "50%",
@@ -1007,18 +1006,18 @@ async function exportPDF() {
   });
   document.body.appendChild(loadingMsg);
 
-  // Clonar contenido
+  // Clonar para asegurar consistencia de estilos
   const clone = node.cloneNode(true);
   clone.style.position = "absolute";
   clone.style.left = "-9999px";
   clone.style.top = "0";
-  clone.style.width = "1200px";
-  clone.style.background = "#fff";
+  clone.style.width = "1600px"; // 📏 más ancho para alta resolución
+  clone.style.background = "#ffffff";
   document.body.appendChild(clone);
 
-  // Renderizar imagen grande
+  // Captura con alta escala
   const canvas = await html2canvas(clone, {
-    scale: 2,
+    scale: 3, // 📸 alta calidad
     useCORS: true,
     backgroundColor: "#ffffff",
     logging: false,
@@ -1026,33 +1025,20 @@ async function exportPDF() {
     windowHeight: clone.scrollHeight
   });
 
+  // Limpieza
   document.body.removeChild(clone);
   document.body.removeChild(loadingMsg);
 
-  // Crear PDF A4 paginado
-  const imgData = canvas.toDataURL("image/png");
-  const pdf = new jsPDF("p", "mm", "a4");
-  const pageWidth = pdf.internal.pageSize.getWidth();
-  const pageHeight = pdf.internal.pageSize.getHeight();
+  // Convertir a imagen y descargar
+  const imageData = canvas.toDataURL("image/png", 1.0);
+  const link = document.createElement("a");
+  link.href = imageData;
+  link.download = "Account_Statement.png";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 
-  // Calcular escalas
-  const imgWidth = pageWidth;
-  const imgHeight = (canvas.height * imgWidth) / canvas.width;
-  let heightLeft = imgHeight;
-  let position = 0;
-
-  pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-  heightLeft -= pageHeight;
-
-  // Añadir páginas si el contenido es largo
-  while (heightLeft > 0) {
-    position = heightLeft - imgHeight;
-    pdf.addPage();
-    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
-  }
-
-  pdf.save("Account_Statement.pdf");
+  alert("✅ Image exported successfully!");
 }
 
 
@@ -1155,6 +1141,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
