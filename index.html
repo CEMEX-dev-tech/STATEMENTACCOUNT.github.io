@@ -982,65 +982,83 @@ function renderTable(data, title) {
 }
   
 async function exportPDF() {
-  if (!window.jspdf || !window.jspdf.jsPDF) {
-    alert("jsPDF not loaded.");
-    return;
-  }
+  const { jsPDF } = window.jspdf;
+  const node = document.getElementById("dataScreen");
 
+  // Esperar fuentes cargadas (por seguridad)
   if (document.fonts && document.fonts.ready) {
     try { await document.fonts.ready; } catch (e) {}
   }
 
-  const { jsPDF } = window.jspdf;
-  const node = document.getElementById("dataScreen");
+  // 💡 Mostrar un mensaje temporal mientras se genera
+  const oldHTML = node.innerHTML;
+  const loadingMsg = document.createElement("div");
+  loadingMsg.textContent = "Generating PDF, please wait...";
+  loadingMsg.style.position = "fixed";
+  loadingMsg.style.top = "50%";
+  loadingMsg.style.left = "50%";
+  loadingMsg.style.transform = "translate(-50%, -50%)";
+  loadingMsg.style.background = "rgba(255,255,255,0.95)";
+  loadingMsg.style.padding = "20px 40px";
+  loadingMsg.style.borderRadius = "10px";
+  loadingMsg.style.fontFamily = "Outfit, sans-serif";
+  loadingMsg.style.fontSize = "1.5rem";
+  loadingMsg.style.zIndex = "9999";
+  document.body.appendChild(loadingMsg);
 
-  // 👇 Clonar el nodo con un ancho más grande
+  // 👇 Clonar el nodo para evitar interferencias visuales
   const clone = node.cloneNode(true);
-  clone.style.width = "3500px"; // ancho amplio para buena resolución
-  clone.style.maxWidth = "3500px";
   clone.style.position = "absolute";
   clone.style.left = "-9999px";
+  clone.style.top = "0";
+  clone.style.width = "1200px"; // ancho ideal para PDFs
+  clone.style.maxWidth = "1200px";
   document.body.appendChild(clone);
 
-  // 📸 Convertir a canvas con alta escala
+  // 📸 Generar canvas de alta calidad
   const canvas = await html2canvas(clone, {
-    scale: 3,
+    scale: 2,            // alta resolución sin exagerar
     useCORS: true,
-    backgroundColor: "#ffffff"
+    backgroundColor: "#ffffff",
+    logging: false
   });
 
   document.body.removeChild(clone);
+  document.body.removeChild(loadingMsg);
 
-  // 📄 Convertir a PDF (formato extra largo)
-  const imgData = canvas.toDataURL("image/jpeg", 0.9);
+  // 📄 Crear PDF en formato A4 vertical
   const pdf = new jsPDF({
-    orientation: "portrait",      // Vertical (para largo)
+    orientation: "portrait",
     unit: "pt",
-    format: [2380, 5000]          // formato personalizado: ancho A3, alto extendido
+    format: "a4"
   });
 
-  const pdfW = pdf.internal.pageSize.getWidth();
-  const pdfH = pdf.internal.pageSize.getHeight();
-  const imgW = pdfW;
-  const imgH = canvas.height * (imgW / canvas.width);
+  const imgData = canvas.toDataURL("image/jpeg", 0.95);
+  const pdfWidth = pdf.internal.pageSize.getWidth();
+  const pdfHeight = pdf.internal.pageSize.getHeight();
 
-  let heightLeft = imgH;
+  const imgWidth = pdfWidth;
+  const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+
+  let heightLeft = imgHeight;
   let position = 0;
 
   // Primera página
-  pdf.addImage(imgData, "JPEG", 0, position, imgW, imgH);
-  heightLeft -= pdfH;
+  pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
+  heightLeft -= pdfHeight;
 
-  // Agregar páginas si sobra contenido
+  // Agregar páginas adicionales si sobra contenido
   while (heightLeft > 0) {
-    position = heightLeft - imgH;
-    pdf.addPage([2380, 5000]);
-    pdf.addImage(imgData, "JPEG", 0, position, imgW, imgH);
-    heightLeft -= pdfH;
+    position -= pdfHeight;
+    pdf.addPage();
+    pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
+    heightLeft -= pdfHeight;
   }
 
-  pdf.save("Account_Statement_Large.pdf");
+  // ✅ Guardar archivo final
+  pdf.save("Account_Statement.pdf");
 }
+
 
   
 function exportExcel() {
@@ -1139,6 +1157,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
