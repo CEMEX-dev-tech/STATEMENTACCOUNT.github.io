@@ -25,7 +25,7 @@
       align-items: flex-start; /* ✅ inicia desde arriba */
       justify-content: center;
       box-sizing: border-box;
-      zoom: 0.5;
+      
     }
     th:nth-child(13),
     th:nth-child(14),
@@ -840,13 +840,9 @@ function renderTable(data, title) {
 async function exportPDF() {
   const { jsPDF } = window.jspdf;
   const element = document.getElementById("dataScreen");
+  if (!element) return alert("❌ No se encontró el contenido para exportar.");
 
-  if (!element) {
-    alert("❌ No se encontró el contenido para exportar.");
-    return;
-  }
-
-  // 🟦 Mensaje temporal mientras se genera
+  // 🟦 Mensaje temporal
   const loadingMsg = document.createElement("div");
   loadingMsg.textContent = "⏳ Generando PDF, por favor espera...";
   loadingMsg.style.fontSize = "2rem";
@@ -855,35 +851,39 @@ async function exportPDF() {
   loadingMsg.style.marginTop = "20px";
   element.prepend(loadingMsg);
 
+  // 🧩 Correcciones antes de la captura
+  document.body.style.position = "static"; // evita desplazamiento
+  await document.fonts.ready; // espera carga de fuentes
+  window.scrollTo(0, 0); // asegura vista al inicio
+
   try {
-    // 🖼️ Renderizar la vista completa con alta resolución
     const canvas = await html2canvas(element, {
-      scale: 3, // mayor nitidez
+      scale: 3,
       useCORS: true,
       backgroundColor: "#ffffff",
-      scrollY: 0, // evita desplazamientos
+      scrollX: 0,
+      scrollY: 0,
       logging: false
     });
 
     const imgData = canvas.toDataURL("image/png", 1.0);
 
-    // 📏 Configuración del PDF
-    const pdf = new jsPDF("p", "mm", "a4");
+    // 📄 Configura PDF horizontal (landscape)
+    const pdf = new jsPDF("l", "mm", "a4");
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
 
-    // 🧮 Ajustar dimensiones de la imagen
     const imgWidth = pageWidth;
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-    let heightLeft = imgHeight;
     let position = 0;
+    let heightLeft = imgHeight;
 
-    // 🧾 Agregar primera página
+    // 🧾 Primera página
     pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
     heightLeft -= pageHeight;
 
-    // 📄 Si el contenido excede, crea páginas nuevas
+    // ➕ Si excede una hoja, crea más
     while (heightLeft > 0) {
       position -= pageHeight;
       pdf.addPage();
@@ -891,16 +891,15 @@ async function exportPDF() {
       heightLeft -= pageHeight;
     }
 
-    // 💾 Guardar archivo
     pdf.save("Account_Statement.pdf");
   } catch (err) {
     console.error("❌ Error al generar el PDF:", err);
     alert("Ocurrió un error al generar el PDF.");
   } finally {
     loadingMsg.remove();
+    document.body.style.position = ""; // restaura posición original
   }
 }
-  
 function exportExcel() {
   if (currentCustomerRows.length === 0) {
     alert("No data to export");
@@ -997,6 +996,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
