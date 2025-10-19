@@ -872,7 +872,7 @@ async function exportPDF() {
     const imgData = canvas.toDataURL("image/png", 1.0);
 
     // 📄 Configura PDF horizontal (landscape)
-    const pdf = new jsPDF("l", "mm", "a4");
+    const pdf = new jsPDF("l", "mm", [2000, 2000]);
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
 
@@ -998,6 +998,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
