@@ -842,11 +842,11 @@ async function exportPDF() {
   const element = document.getElementById("dataScreen");
 
   if (!element) {
-    alert("No se encontró el contenido para exportar.");
+    alert("❌ No se encontró el contenido para exportar.");
     return;
   }
 
-  // Mostrar mensaje temporal
+  // 🟦 Mensaje temporal mientras se genera
   const loadingMsg = document.createElement("div");
   loadingMsg.textContent = "⏳ Generando PDF, por favor espera...";
   loadingMsg.style.fontSize = "2rem";
@@ -856,39 +856,45 @@ async function exportPDF() {
   element.prepend(loadingMsg);
 
   try {
+    // 🖼️ Renderizar la vista completa con alta resolución
     const canvas = await html2canvas(element, {
-      scale: 2, // buena calidad sin exagerar
+      scale: 3, // mayor nitidez
       useCORS: true,
       backgroundColor: "#ffffff",
-      scrollY: -window.scrollY
+      scrollY: 0, // evita desplazamientos
+      logging: false
     });
 
-    const imgData = canvas.toDataURL("image/png");
+    const imgData = canvas.toDataURL("image/png", 1.0);
+
+    // 📏 Configuración del PDF
     const pdf = new jsPDF("p", "mm", "a4");
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
 
+    // 🧮 Ajustar dimensiones de la imagen
     const imgWidth = pageWidth;
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-    let position = 0;
     let heightLeft = imgHeight;
+    let position = 0;
 
-    // Agregar primera página
+    // 🧾 Agregar primera página
     pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
     heightLeft -= pageHeight;
 
-    // Agregar más páginas si el contenido excede una hoja
+    // 📄 Si el contenido excede, crea páginas nuevas
     while (heightLeft > 0) {
-      position = heightLeft - imgHeight;
+      position -= pageHeight;
       pdf.addPage();
       pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
       heightLeft -= pageHeight;
     }
 
+    // 💾 Guardar archivo
     pdf.save("Account_Statement.pdf");
   } catch (err) {
-    console.error("❌ Error generando PDF:", err);
+    console.error("❌ Error al generar el PDF:", err);
     alert("Ocurrió un error al generar el PDF.");
   } finally {
     loadingMsg.remove();
@@ -991,6 +997,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
