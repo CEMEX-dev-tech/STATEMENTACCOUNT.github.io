@@ -25,7 +25,7 @@
       align-items: flex-start; /* ✅ inicia desde arriba */
       justify-content: center;
       box-sizing: border-box;
-      zoom:0.5;      
+      zoom:0.8;      
     }
     th:nth-child(13),
     th:nth-child(14),
@@ -845,7 +845,7 @@ async function exportPDF() {
 
   // 🟦 Mensaje temporal
   const loadingMsg = document.createElement("div");
-  loadingMsg.textContent = "⏳ Generando PDF, por favor espera...";
+  loadingMsg.textContent = "-";
   loadingMsg.style.fontSize = "2rem";
   loadingMsg.style.color = "#0600b6";
   loadingMsg.style.textAlign = "center";
@@ -902,8 +902,6 @@ async function exportPDF() {
     document.body.style.position = "";    // restaura posición original
   }
 }
-
-
 function exportExcel() {
   if (currentCustomerRows.length === 0) {
     alert("No data to export");
@@ -1000,6 +998,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
