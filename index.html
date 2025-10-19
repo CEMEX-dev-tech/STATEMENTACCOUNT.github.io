@@ -25,7 +25,7 @@
       align-items: flex-start; /* ✅ inicia desde arriba */
       justify-content: center;
       box-sizing: border-box;
-      
+      zoom:0.5;      
     }
     th:nth-child(13),
     th:nth-child(14),
@@ -837,6 +837,7 @@ function renderTable(data, title) {
   container.innerHTML += renderSecondGroupTable(secondGroup,"PAYMENT - CREDIT BALANCE");
 }  
 
+
 async function exportPDF() {
   const { jsPDF } = window.jspdf;
   const element = document.getElementById("dataScreen");
@@ -844,7 +845,7 @@ async function exportPDF() {
 
   // 🟦 Mensaje temporal
   const loadingMsg = document.createElement("div");
-  loadingMsg.textContent = "-";
+  loadingMsg.textContent = "⏳ Generando PDF, por favor espera...";
   loadingMsg.style.fontSize = "2rem";
   loadingMsg.style.color = "#0600b6";
   loadingMsg.style.textAlign = "center";
@@ -852,9 +853,11 @@ async function exportPDF() {
   element.prepend(loadingMsg);
 
   // 🧩 Correcciones antes de la captura
-  document.body.style.position = "static"; // evita desplazamiento
-  await document.fonts.ready; // espera carga de fuentes
-  window.scrollTo(0, 0); // asegura vista al inicio
+  const prevZoom = document.body.style.zoom;   // 🔹 guarda el zoom actual
+  document.body.style.zoom = "1";              // ✅ quita el zoom solo para exportar
+  document.body.style.position = "static";     // evita desplazamiento
+  await document.fonts.ready;                  // espera carga de fuentes
+  window.scrollTo(0, 0);                       // asegura vista al inicio
 
   try {
     const canvas = await html2canvas(element, {
@@ -879,11 +882,9 @@ async function exportPDF() {
     let position = 0;
     let heightLeft = imgHeight;
 
-    // 🧾 Primera página
     pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
     heightLeft -= pageHeight;
 
-    // ➕ Si excede una hoja, crea más
     while (heightLeft > 0) {
       position -= pageHeight;
       pdf.addPage();
@@ -897,9 +898,12 @@ async function exportPDF() {
     alert("Ocurrió un error al generar el PDF.");
   } finally {
     loadingMsg.remove();
-    document.body.style.position = ""; // restaura posición original
+    document.body.style.zoom = prevZoom;  // ✅ restaura el zoom original
+    document.body.style.position = "";    // restaura posición original
   }
 }
+
+
 function exportExcel() {
   if (currentCustomerRows.length === 0) {
     alert("No data to export");
@@ -996,6 +1000,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
