@@ -845,8 +845,8 @@ async function exportPDF() {
 
   // 🟦 Mensaje temporal
   const loadingMsg = document.createElement("div");
-  loadingMsg.textContent = "Generating PDF, please wait...";
-  loadingMsg.style.fontSize = "1.5rem";
+  loadingMsg.textContent = "Generating optimized PDF, please wait...";
+  loadingMsg.style.fontSize = "1.8rem";
   loadingMsg.style.color = "#0600b6";
   loadingMsg.style.textAlign = "center";
   loadingMsg.style.marginTop = "20px";
@@ -860,32 +860,38 @@ async function exportPDF() {
   window.scrollTo(0, 0);
 
   try {
-    // 📏 Obtener tamaño real del contenido
-    const contentWidth = element.scrollWidth;
-    const contentHeight = element.scrollHeight;
-
-    // 📸 Renderizar con todo el scrollWidth y scrollHeight
     const canvas = await html2canvas(element, {
-      scale: 2,  // calidad de imagen (puedes subir a 3 si quieres más nitidez)
+      scale: 2, // ✅ buena calidad sin exagerar
       useCORS: true,
       backgroundColor: "#ffffff",
       scrollX: 0,
       scrollY: 0,
-      width: contentWidth,   // 🔹 ancho total real
-      height: contentHeight, // 🔹 alto total real
-      windowWidth: contentWidth,
-      windowHeight: contentHeight,
       logging: false
     });
 
-    // 💾 Convertir a JPG comprimido
-    const imgData = canvas.toDataURL("image/jpeg", 0.85);
+    // 📸 Convertir a JPG con compresión
+    const imgData = canvas.toDataURL("image/jpeg", 0.85); // 💾 menor peso, buena calidad
 
-    // 📄 Crear PDF muy grande (landscape)
-    const pdf = new jsPDF("l", "mm", [canvas.width * 0.2646, canvas.height * 0.2646]); 
-    // 1px = 0.2646 mm → se adapta al tamaño real de la captura
+    // 📄 Configurar PDF en horizontal y grande
+    const pdf = new jsPDF("l", "mm", [3000, 3000]);
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
 
-    pdf.addImage(imgData, "JPEG", 0, 0, canvas.width * 0.2646, canvas.height * 0.2646);
+    const imgWidth = pageWidth;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+    let position = 0;
+    let heightLeft = imgHeight;
+
+    pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+
+    while (heightLeft > 0) {
+      position -= pageHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+    }
 
     pdf.save("Account_Statement.pdf");
   } catch (err) {
@@ -994,6 +1000,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
