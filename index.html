@@ -854,7 +854,7 @@ async function exportPDF() {
 
   // 🧩 Correcciones antes de la captura
   const prevZoom = document.body.style.zoom;   // 🔹 guarda el zoom actual
-  document.body.style.zoom = "1";              // ✅ quita el zoom solo para exportar
+  document.body.style.zoom = "0.5";              // ✅ quita el zoom solo para exportar
   document.body.style.position = "static";     // evita desplazamiento
   await document.fonts.ready;                  // espera carga de fuentes
   window.scrollTo(0, 0);                       // asegura vista al inicio
@@ -998,6 +998,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
