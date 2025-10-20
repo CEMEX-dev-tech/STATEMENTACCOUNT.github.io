@@ -910,6 +910,7 @@ async function exportPDF() {
     alert("Ocurrió un error al generar el PDF.");
   } finally {
     // ✅ Restaurar el zoom original
+    loadingMsg.remove();
     document.body.style.zoom = prevZoom;
     document.body.style.position = "";
   }
@@ -1012,6 +1013,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
