@@ -16,7 +16,7 @@
       overflow: auto; /* ✅ permite scroll global */
     }
     body.exporting-capture {
-      zoom: 1 !important;
+      zoom: 0.5 !important;
       position: static !important;
     }
     body {
@@ -847,7 +847,7 @@ async function exportPDF() {
 
   // Mensaje temporal
   const loadingMsg = document.createElement("div");
-  loadingMsg.textContent = "Generating high-resolution PDF, please wait...";
+  loadingMsg.textContent = " ";
   Object.assign(loadingMsg.style, {
     fontSize: "1.2rem",
     color: "#0600b6",
@@ -1012,6 +1012,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
