@@ -845,23 +845,23 @@ async function exportPDF() {
 
   // 🟦 Mensaje temporal
   const loadingMsg = document.createElement("div");
-  loadingMsg.textContent = "-";
-  loadingMsg.style.fontSize = "2rem";
+  loadingMsg.textContent = "Generating optimized PDF, please wait...";
+  loadingMsg.style.fontSize = "1.8rem";
   loadingMsg.style.color = "#0600b6";
   loadingMsg.style.textAlign = "center";
   loadingMsg.style.marginTop = "20px";
   element.prepend(loadingMsg);
 
-  // 🧩 Correcciones antes de la captura
-  const prevZoom = document.body.style.zoom;   // 🔹 guarda el zoom actual
-  document.body.style.zoom = "0.5";              // ✅ quita el zoom solo para exportar
-  document.body.style.position = "static";     // evita desplazamiento
-  await document.fonts.ready;                  // espera carga de fuentes
-  window.scrollTo(0, 0);                       // asegura vista al inicio
+  // 🧩 Ajustes antes de la captura
+  const prevZoom = document.body.style.zoom;
+  document.body.style.zoom = "1"; // quitar zoom para exportar limpio
+  document.body.style.position = "static";
+  await document.fonts.ready;
+  window.scrollTo(0, 0);
 
   try {
     const canvas = await html2canvas(element, {
-      scale: 3,
+      scale: 2, // ✅ buena calidad sin exagerar
       useCORS: true,
       backgroundColor: "#ffffff",
       scrollX: 0,
@@ -869,10 +869,11 @@ async function exportPDF() {
       logging: false
     });
 
-    const imgData = canvas.toDataURL("image/png", 1.0);
+    // 📸 Convertir a JPG con compresión
+    const imgData = canvas.toDataURL("image/jpeg", 0.85); // 💾 menor peso, buena calidad
 
-    // 📄 Configura PDF horizontal (landscape)
-    const pdf = new jsPDF("l", "mm", [2000, 2000]);
+    // 📄 Configurar PDF en horizontal y grande
+    const pdf = new jsPDF("l", "mm", [3000, 3000]);
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
 
@@ -882,13 +883,13 @@ async function exportPDF() {
     let position = 0;
     let heightLeft = imgHeight;
 
-    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+    pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
     heightLeft -= pageHeight;
 
     while (heightLeft > 0) {
       position -= pageHeight;
       pdf.addPage();
-      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+      pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
       heightLeft -= pageHeight;
     }
 
@@ -898,10 +899,11 @@ async function exportPDF() {
     alert("Ocurrió un error al generar el PDF.");
   } finally {
     loadingMsg.remove();
-    document.body.style.zoom = prevZoom;  // ✅ restaura el zoom original
-    document.body.style.position = "";    // restaura posición original
+    document.body.style.zoom = prevZoom;
+    document.body.style.position = "";
   }
 }
+
 function exportExcel() {
   if (currentCustomerRows.length === 0) {
     alert("No data to export");
@@ -998,6 +1000,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
