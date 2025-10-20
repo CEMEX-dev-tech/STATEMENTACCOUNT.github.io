@@ -844,64 +844,77 @@ async function exportPDF() {
 
   // 🟦 Mensaje temporal
   const loadingMsg = document.createElement("div");
-  loadingMsg.textContent = "Generating optimized PDF, please wait...";
+  loadingMsg.textContent = "-";
   loadingMsg.style.fontSize = "1.8rem";
   loadingMsg.style.color = "#0600b6";
   loadingMsg.style.textAlign = "center";
   loadingMsg.style.marginTop = "20px";
   element.prepend(loadingMsg);
 
-  // 🧩 Ajustes antes de la captura
-  const prevZoom = document.body.style.zoom;
-  document.body.style.zoom = "1"; // quitar zoom para exportar limpio
+  // 🧩 Ajustes previos
+  const prevZoom = document.body.style.zoom || "1";
+  document.body.style.zoom = "1"; 
   document.body.style.position = "static";
   await document.fonts.ready;
   window.scrollTo(0, 0);
 
   try {
-    const canvas = await html2canvas(element, {
-      scale: 2, // ✅ buena calidad sin exagerar
+    // 🧱 Clonar todo el contenido para capturar sin scroll ni recortes
+    const clone = element.cloneNode(true);
+    const realWidth = element.scrollWidth;
+    const realHeight = element.scrollHeight;
+
+    // 🔧 Hacer el clon enorme (captura 100 %)
+    clone.style.width = realWidth + "px";
+    clone.style.height = realHeight + "px";
+    clone.style.maxWidth = "none";
+    clone.style.maxHeight = "none";
+    clone.style.position = "absolute";
+    clone.style.left = "-9999px";
+    clone.style.top = "0";
+    clone.style.background = "#ffffff";
+    clone.style.overflow = "visible";
+    document.body.appendChild(clone);
+
+    // 📸 Captura con alta resolución (scale: 3 = muy nítido)
+    const canvas = await html2canvas(clone, {
+      scale: 3, // 🧠 resolución máxima
       useCORS: true,
       backgroundColor: "#ffffff",
-      scrollX: 0,
-      scrollY: 0,
-      logging: false
+      logging: false,
+      windowWidth: realWidth,
+      windowHeight: realHeight
     });
 
-    // 📸 Convertir a JPG con compresión
-    const imgData = canvas.toDataURL("image/jpeg", 0.85); // 💾 menor peso, buena calidad
+    document.body.removeChild(clone);
+    loadingMsg.remove();
 
-    // 📄 Configurar PDF en horizontal y grande
-    const pdf = new jsPDF("l", "mm", [3000, 3000]);
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
+    // 💾 Convertir a JPG con compresión (reduce tamaño del archivo)
+    const imgData = canvas.toDataURL("image/jpeg", 0.85);
 
-    const imgWidth = pageWidth;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    // 🧮 Convertir px → mm (1 px = 0.2646 mm)
+    const pdfWidth = canvas.width * 0.2646;
+    const pdfHeight = canvas.height * 0.2646;
 
-    let position = 0;
-    let heightLeft = imgHeight;
+    // 📄 Crear PDF enorme y horizontal
+    const pdf = new jsPDF({
+      orientation: pdfWidth > pdfHeight ? "l" : "p",
+      unit: "mm",
+      format: [pdfWidth, pdfHeight]
+    });
 
-    pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
-
-    while (heightLeft > 0) {
-      position -= pageHeight;
-      pdf.addPage();
-      pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-    }
-
-    pdf.save("Account_Statement.pdf");
+    pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, pdfHeight);
+    pdf.save("Account_Statement_Full.pdf");
   } catch (err) {
     console.error("❌ Error al generar el PDF:", err);
     alert("Ocurrió un error al generar el PDF.");
   } finally {
-    loadingMsg.remove();
+    // ✅ Restaurar el zoom original
     document.body.style.zoom = prevZoom;
     document.body.style.position = "";
   }
 }
+
 
 function exportExcel() {
   if (currentCustomerRows.length === 0) {
@@ -999,6 +1012,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
