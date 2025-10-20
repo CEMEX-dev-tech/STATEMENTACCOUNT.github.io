@@ -836,88 +836,70 @@ function renderTable(data, title) {
   container.innerHTML += renderTable(firstGroup,"BALANCES");
   container.innerHTML += renderSecondGroupTable(secondGroup,"PAYMENT - CREDIT BALANCE");
 }  
-
-
+  
 async function exportPDF() {
-  // 🧩 Verifica que jsPDF esté cargado
-  if (!window.jspdf || !window.jspdf.jsPDF) {
-    alert("jsPDF not loaded.");
-    return;
-  }
-
-  // 🕓 Espera a que las fuentes estén listas (evita errores de tipografía)
-  if (document.fonts && document.fonts.ready) {
-    try {
-      await document.fonts.ready;
-    } catch (e) {
-      console.warn("Fonts not fully ready:", e);
-    }
-  }
-
   const { jsPDF } = window.jspdf;
-  const node = document.getElementById("dataScreen");
-  if (!node) {
-    alert("❌ No se encontró el contenido para exportar.");
-    return;
-  }
+  const element = document.getElementById("dataScreen");
+  if (!element) return alert("❌ No se encontró el contenido para exportar.");
 
-  // 👇 Clonar el nodo para capturarlo sin recortes ni scroll
-  const clone = node.cloneNode(true);
-  clone.style.width = "3000px";     // 📌 fuerza un ancho grande para evitar cortes
-  clone.style.maxWidth = "3000px";
-  clone.style.position = "absolute";
-  clone.style.left = "-9999px";
-  clone.style.top = "0";
-  clone.style.background = "#ffffff";
-  clone.style.overflow = "visible";
-  document.body.appendChild(clone);
+  // 🟦 Mensaje temporal
+  const loadingMsg = document.createElement("div");
+  loadingMsg.textContent = "Generating optimized PDF, please wait...";
+  loadingMsg.style.fontSize = "1.8rem";
+  loadingMsg.style.color = "#0600b6";
+  loadingMsg.style.textAlign = "center";
+  loadingMsg.style.marginTop = "20px";
+  element.prepend(loadingMsg);
+
+  // 🧩 Ajustes antes de la captura
+  const prevZoom = document.body.style.zoom;
+  document.body.style.zoom = "1"; // quitar zoom para exportar limpio
+  document.body.style.position = "static";
+  await document.fonts.ready;
+  window.scrollTo(0, 0);
 
   try {
-    // 📸 Captura el clon completo
-    const canvas = await html2canvas(clone, {
-      scale: 2,              // 🧠 controla la calidad (1 = normal, 2 = alta)
+    const canvas = await html2canvas(element, {
+      scale: 2, // ✅ buena calidad sin exagerar
       useCORS: true,
-      backgroundColor: "#ffffff"
+      backgroundColor: "#ffffff",
+      scrollX: 0,
+      scrollY: 0,
+      logging: false
     });
 
-    // 🧹 Eliminar el clon del DOM
-    document.body.removeChild(clone);
+    // 📸 Convertir a JPG con compresión
+    const imgData = canvas.toDataURL("image/jpeg", 0.85); // 💾 menor peso, buena calidad
 
-    // 💾 Convertir la captura a imagen JPEG comprimida
-    const imgData = canvas.toDataURL("image/jpeg", 0.7); // 0.7 = compresión (más liviano)
+    // 📄 Configurar PDF en horizontal y grande
+    const pdf = new jsPDF("l", "mm", [3000, 3000]);
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
 
-    // 📄 Crear PDF A3 horizontal
-    const pdf = new jsPDF({
-      orientation: "landscape",
-      unit: "pt",
-      format: "a3"
-    });
+    const imgWidth = pageWidth;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-    // 📐 Calcular proporciones
-    const pdfW = pdf.internal.pageSize.getWidth();
-    const pdfH = pdf.internal.pageSize.getHeight();
-    const imgW = pdfW;
-    const imgH = canvas.height * (imgW / canvas.width);
-
-    // 🧾 Si la imagen es más alta que el PDF, agregar páginas
-    let heightLeft = imgH;
     let position = 0;
+    let heightLeft = imgHeight;
 
-    pdf.addImage(imgData, "JPEG", 0, position, imgW, imgH);
-    heightLeft -= pdfH;
+    pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
 
     while (heightLeft > 0) {
-      position = heightLeft - imgH;
+      position -= pageHeight;
       pdf.addPage();
-      pdf.addImage(imgData, "JPEG", 0, position, imgW, imgH);
-      heightLeft -= pdfH;
+      pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
     }
 
-    // 💾 Guardar PDF
     pdf.save("Account_Statement.pdf");
   } catch (err) {
     console.error("❌ Error al generar el PDF:", err);
     alert("Ocurrió un error al generar el PDF.");
+  } finally {
+    loadingMsg.remove();
+    document.body.style.zoom = prevZoom;
+    document.body.style.position = "";
   }
 }
 
@@ -1017,6 +999,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
