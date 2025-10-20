@@ -15,7 +15,10 @@
       padding: 0;
       overflow: auto; /* ✅ permite scroll global */
     }
-
+    body.exporting-capture {
+      zoom: 1 !important;
+      position: static !important;
+    }
     body {
       font-family: 'Outfit', sans-serif;
       width: 100%;
@@ -842,45 +845,42 @@ async function exportPDF() {
   const element = document.getElementById("dataScreen");
   if (!element) return alert("❌ No se encontró el contenido para exportar.");
 
-  // 🟦 Mensaje temporal
+  // Mensaje temporal
   const loadingMsg = document.createElement("div");
-  loadingMsg.textContent = "-";
+  loadingMsg.textContent = "Generating high-resolution PDF, please wait...";
   Object.assign(loadingMsg.style, {
-    fontSize: "1.8rem",
+    fontSize: "1.2rem",
     color: "#0600b6",
     textAlign: "center",
-    marginTop: "20px"
+    marginTop: "10px"
   });
   element.prepend(loadingMsg);
 
-  // 🧩 Guardar y aplicar zoom temporal
-  const prevZoom = document.body.style.zoom || "1";
-  document.body.style.zoom = "1"; // quitar zoom global para exportar limpio
-  document.body.style.position = "static";
-
+  // 👉 No tocamos estilos inline: solo aplicamos una clase que fuerza zoom=1
+  document.body.classList.add("exporting-capture");
   try {
-    await document.fonts.ready;
+    if (document.fonts && document.fonts.ready) { try { await document.fonts.ready; } catch (_) {} }
     window.scrollTo(0, 0);
 
-    // 🧱 Clonar el contenido completo
+    // Clonar contenido a tamaño real para que no se corte
     const clone = element.cloneNode(true);
     const realWidth = element.scrollWidth;
     const realHeight = element.scrollHeight;
-
-    clone.style.width = realWidth + "px";
-    clone.style.height = realHeight + "px";
-    clone.style.maxWidth = "none";
-    clone.style.maxHeight = "none";
-    clone.style.position = "absolute";
-    clone.style.left = "-9999px";
-    clone.style.top = "0";
-    clone.style.background = "#ffffff";
-    clone.style.overflow = "visible";
+    Object.assign(clone.style, {
+      width: realWidth + "px",
+      height: realHeight + "px",
+      maxWidth: "none",
+      maxHeight: "none",
+      position: "absolute",
+      left: "-9999px",
+      top: "0",
+      background: "#ffffff",
+      overflow: "visible"
+    });
     document.body.appendChild(clone);
 
-    // 📸 Capturar con html2canvas
     const canvas = await html2canvas(clone, {
-      scale: 3, // alta resolución
+      scale: 3,                   // alta nitidez
       useCORS: true,
       backgroundColor: "#ffffff",
       logging: false,
@@ -890,36 +890,29 @@ async function exportPDF() {
 
     document.body.removeChild(clone);
 
-    // 💾 Convertir a imagen comprimida
     const imgData = canvas.toDataURL("image/jpeg", 0.85);
+    const pdfW = canvas.width * 0.2646;   // px → mm
+    const pdfH = canvas.height * 0.2646;
 
-    // 📏 Medidas reales
-    const pdfWidth = canvas.width * 0.2646; // px → mm
-    const pdfHeight = canvas.height * 0.2646;
-
-    // 🧾 Crear PDF a tamaño real
     const pdf = new jsPDF({
-      orientation: pdfWidth > pdfHeight ? "l" : "p",
+      orientation: pdfW > pdfH ? "l" : "p",
       unit: "mm",
-      format: [pdfWidth, pdfHeight]
+      format: [pdfW, pdfH]
     });
 
-    pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, pdfHeight);
+    pdf.addImage(imgData, "JPEG", 0, 0, pdfW, pdfH);
     pdf.save("Account_Statement_Full.pdf");
   } catch (err) {
     console.error("❌ Error al generar el PDF:", err);
     alert("Ocurrió un error al generar el PDF.");
   } finally {
-    // ✅ Restaurar el zoom original SIEMPRE, incluso si hay error o demora
-    setTimeout(() => {
-      document.body.style.zoom = prevZoom;
-      document.body.style.position = "";
-      if (loadingMsg && loadingMsg.parentNode) {
-        loadingMsg.remove();
-      }
-    }, 10); // un pequeño delay evita que el navegador lo ignore
+    // 🔄 Siempre vuelve al estado original quitando la clase
+    if (loadingMsg && loadingMsg.parentNode) loadingMsg.remove();
+    // pequeño delay para evitar parpadeos en algunos navegadores
+    setTimeout(() => document.body.classList.remove("exporting-capture"), 1);
   }
 }
+
 
 
 
@@ -1019,6 +1012,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
