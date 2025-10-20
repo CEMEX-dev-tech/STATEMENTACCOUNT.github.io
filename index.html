@@ -843,18 +843,25 @@ async function exportPDF() {
   const element = document.getElementById("dataScreen");
   if (!element) return alert("❌ No se encontró el contenido para exportar.");
 
-  // 🧩 Guarda el zoom actual
-  const prevZoom = document.body.style.zoom || "1";
+  // 🟦 Mensaje temporal
+  const loadingMsg = document.createElement("div");
+  loadingMsg.textContent = "-";
+  loadingMsg.style.fontSize = "1.8rem";
+  loadingMsg.style.color = "#0600b6";
+  loadingMsg.style.textAlign = "center";
+  loadingMsg.style.marginTop = "20px";
+  element.prepend(loadingMsg);
 
-  // 🧭 Ajustes previos
-  document.body.style.zoom = "1";       // quitar zoom para exportar limpio
+  // 🧩 Ajustes antes de la captura
+  const prevZoom = document.body.style.zoom;
+  document.body.style.zoom = "1"; // quitar zoom para exportar limpio
   document.body.style.position = "static";
   await document.fonts.ready;
   window.scrollTo(0, 0);
 
   try {
     const canvas = await html2canvas(element, {
-      scale: 1.8,  // 🧠 aquí controlas la “resolución” (1 = normal, 2 = HD)
+      scale: 2, // ✅ buena calidad sin exagerar
       useCORS: true,
       backgroundColor: "#ffffff",
       scrollX: 0,
@@ -863,10 +870,10 @@ async function exportPDF() {
     });
 
     // 📸 Convertir a JPG con compresión
-    const imgData = canvas.toDataURL("image/jpeg", 0.85);
+    const imgData = canvas.toDataURL("image/jpeg", 0.85); // 💾 menor peso, buena calidad
 
-    // 📄 PDF horizontal, tamaño grande
-    const pdf = new jsPDF("l", "mm", [3000, 3000]);
+    // 📄 Configurar PDF en horizontal y grande
+    const pdf = new jsPDF("l", "mm", [4000, 4000]);
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
 
@@ -891,10 +898,9 @@ async function exportPDF() {
     console.error("❌ Error al generar el PDF:", err);
     alert("Ocurrió un error al generar el PDF.");
   } finally {
-    // ✅ Restaurar configuración original
+    loadingMsg.remove();
     document.body.style.zoom = prevZoom;
     document.body.style.position = "";
-    window.scrollTo(0, 0);
   }
 }
 
@@ -994,6 +1000,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
