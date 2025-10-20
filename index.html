@@ -917,7 +917,7 @@ async function exportPDF() {
       if (loadingMsg && loadingMsg.parentNode) {
         loadingMsg.remove();
       }
-    }, 300); // un pequeño delay evita que el navegador lo ignore
+    }, 10); // un pequeño delay evita que el navegador lo ignore
   }
 }
 
@@ -1019,6 +1019,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
