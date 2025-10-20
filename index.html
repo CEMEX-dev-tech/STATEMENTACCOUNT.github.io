@@ -873,7 +873,7 @@ async function exportPDF() {
     const imgData = canvas.toDataURL("image/jpeg", 0.85); // 💾 menor peso, buena calidad
 
     // 📄 Configurar PDF en horizontal y grande
-    const pdf = new jsPDF("l", "mm", [3000, 3000]);
+    const pdf = new jsPDF("l", "mm", [5000, 5000]);
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
 
@@ -1000,6 +1000,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
