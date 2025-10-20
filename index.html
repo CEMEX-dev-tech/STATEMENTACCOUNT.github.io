@@ -845,26 +845,28 @@ async function exportPDF() {
   // 🟦 Mensaje temporal
   const loadingMsg = document.createElement("div");
   loadingMsg.textContent = "-";
-  loadingMsg.style.fontSize = "1.8rem";
-  loadingMsg.style.color = "#0600b6";
-  loadingMsg.style.textAlign = "center";
-  loadingMsg.style.marginTop = "20px";
+  Object.assign(loadingMsg.style, {
+    fontSize: "1.8rem",
+    color: "#0600b6",
+    textAlign: "center",
+    marginTop: "20px"
+  });
   element.prepend(loadingMsg);
 
-  // 🧩 Ajustes previos
+  // 🧩 Guardar y aplicar zoom temporal
   const prevZoom = document.body.style.zoom || "1";
-  document.body.style.zoom = "1"; 
+  document.body.style.zoom = "1"; // quitar zoom global para exportar limpio
   document.body.style.position = "static";
-  await document.fonts.ready;
-  window.scrollTo(0, 0);
 
   try {
-    // 🧱 Clonar todo el contenido para capturar sin scroll ni recortes
+    await document.fonts.ready;
+    window.scrollTo(0, 0);
+
+    // 🧱 Clonar el contenido completo
     const clone = element.cloneNode(true);
     const realWidth = element.scrollWidth;
     const realHeight = element.scrollHeight;
 
-    // 🔧 Hacer el clon enorme (captura 100 %)
     clone.style.width = realWidth + "px";
     clone.style.height = realHeight + "px";
     clone.style.maxWidth = "none";
@@ -876,9 +878,9 @@ async function exportPDF() {
     clone.style.overflow = "visible";
     document.body.appendChild(clone);
 
-    // 📸 Captura con alta resolución (scale: 3 = muy nítido)
+    // 📸 Capturar con html2canvas
     const canvas = await html2canvas(clone, {
-      scale: 3, // 🧠 resolución máxima
+      scale: 3, // alta resolución
       useCORS: true,
       backgroundColor: "#ffffff",
       logging: false,
@@ -887,16 +889,15 @@ async function exportPDF() {
     });
 
     document.body.removeChild(clone);
-    loadingMsg.remove();
 
-    // 💾 Convertir a JPG con compresión (reduce tamaño del archivo)
+    // 💾 Convertir a imagen comprimida
     const imgData = canvas.toDataURL("image/jpeg", 0.85);
 
-    // 🧮 Convertir px → mm (1 px = 0.2646 mm)
-    const pdfWidth = canvas.width * 0.2646;
+    // 📏 Medidas reales
+    const pdfWidth = canvas.width * 0.2646; // px → mm
     const pdfHeight = canvas.height * 0.2646;
 
-    // 📄 Crear PDF enorme y horizontal
+    // 🧾 Crear PDF a tamaño real
     const pdf = new jsPDF({
       orientation: pdfWidth > pdfHeight ? "l" : "p",
       unit: "mm",
@@ -909,12 +910,17 @@ async function exportPDF() {
     console.error("❌ Error al generar el PDF:", err);
     alert("Ocurrió un error al generar el PDF.");
   } finally {
-    // ✅ Restaurar el zoom original
-    loadingMsg.remove();
-    document.body.style.zoom = prevZoom;
-    document.body.style.position = "";
+    // ✅ Restaurar el zoom original SIEMPRE, incluso si hay error o demora
+    setTimeout(() => {
+      document.body.style.zoom = prevZoom;
+      document.body.style.position = "";
+      if (loadingMsg && loadingMsg.parentNode) {
+        loadingMsg.remove();
+      }
+    }, 300); // un pequeño delay evita que el navegador lo ignore
   }
 }
+
 
 
 function exportExcel() {
@@ -1013,6 +1019,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
