@@ -843,15 +843,6 @@ async function exportPDF() {
   const element = document.getElementById("dataScreen");
   if (!element) return alert("❌ No se encontró el contenido para exportar.");
 
-  // 🟦 Mensaje temporal
-  const loadingMsg = document.createElement("div");
-  loadingMsg.textContent = "Generating optimized PDF, please wait...";
-  loadingMsg.style.fontSize = "1.8rem";
-  loadingMsg.style.color = "#0600b6";
-  loadingMsg.style.textAlign = "center";
-  loadingMsg.style.marginTop = "20px";
-  element.prepend(loadingMsg);
-
   // 🧩 Ajustes antes de la captura
   const prevZoom = document.body.style.zoom;
   document.body.style.zoom = "1"; // quitar zoom para exportar limpio
@@ -861,7 +852,7 @@ async function exportPDF() {
 
   try {
     const canvas = await html2canvas(element, {
-      scale: 2, // ✅ buena calidad sin exagerar
+      scale: 1, // ✅ buena calidad sin exagerar
       useCORS: true,
       backgroundColor: "#ffffff",
       scrollX: 0,
@@ -1000,6 +991,7 @@ function filterColumn(input, columnName, tableTitle) {
 </script>
 </body>
 </html>
+
 
 
 
