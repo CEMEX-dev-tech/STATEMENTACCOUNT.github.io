@@ -441,10 +441,12 @@ async function exportPDF() {
     const realWidth = element.scrollWidth; 
     const realHeight = element.scrollHeight;
     const extendedWidth = realWidth * 3;  // aumenta 3x el ancho de captura
+    const extendedHeight = realHeight * 1.2; // opcional para evitar recorte inferior
+
     
     Object.assign(clone.style, { 
-      width: extendedWidth + "px",   // ✅ usa extendedWidth aquí
-      height: realHeight + "px", 
+      width: extendedWidth + "px",   // ✅ usa extendedWidth aquí      
+      height: extendedHeight + "px",
       maxWidth: "none", 
       maxHeight: "none", 
       position: "absolute", 
@@ -586,6 +588,7 @@ function filterColumn(input, columnName, tableTitle) {
       window.location.href = "about:blank"; 
     }
   }, 1000);
+
 
 
 
