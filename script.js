@@ -439,9 +439,11 @@ async function exportPDF() {
     // Clonar contenido a tamaño real para que no se corte 
     const clone = element.cloneNode(true); 
     const realWidth = element.scrollWidth; 
-    const realHeight = element.scrollHeight; 
+    const realHeight = element.scrollHeight;
+    const extendedWidth = realWidth * 3;  // aumenta 3x el ancho de captura
+    
     Object.assign(clone.style, { 
-      width: realWidth + "px", 
+      width: extendedWidth + "px",   // ✅ usa extendedWidth aquí
       height: realHeight + "px", 
       maxWidth: "none", 
       maxHeight: "none", 
@@ -449,8 +451,11 @@ async function exportPDF() {
       left: "-9999px", 
       top: "0", 
       background: "#ffffff", 
-      overflow: "visible" 
-    }); 
+      overflow: "visible",
+      transform: "scale(1)",        // ✅ evita compresión visual
+      transformOrigin: "top left"
+    });
+
     document.body.appendChild(clone); 
 
     const canvas = await html2canvas(clone, { 
@@ -581,5 +586,6 @@ function filterColumn(input, columnName, tableTitle) {
       window.location.href = "about:blank"; 
     }
   }, 1000);
+
 
 
