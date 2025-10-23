@@ -6,7 +6,7 @@
       overflow: auto; /* ✅ permite scroll global */
     }
     body.exporting-capture {
-      zoom: 0.5 !important;
+      zoom: 1 !important;
       position: static !important;
     }
     body {
@@ -307,3 +307,4 @@
         white-space: normal;
       }
     }
+
