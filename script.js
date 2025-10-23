@@ -410,69 +410,83 @@ function renderTable(data, title) {
   container.innerHTML += renderSecondGroupTable(secondGroup,"PAYMENT - CREDIT BALANCE");
 }  
   
-async function exportPDF() {
-  const { jsPDF } = window.jspdf;
-  const element = document.getElementById("dataScreen");
-  if (!element) return alert("❌ No se encontró el contenido para exportar.");
+async function exportPDF() { 
+  const { jsPDF } = window.jspdf; 
+  const element = document.getElementById("dataScreen"); 
+  if (!element) return alert("❌ No se encontró el contenido para exportar."); 
 
-  document.body.classList.add("exporting-capture");
+  // Mensaje temporal 
+  const loadingMsg = document.createElement("div"); 
+  loadingMsg.textContent = " "; 
+  Object.assign(loadingMsg.style, { 
+    fontSize: "1.2rem", 
+    color: "#0600b6", 
+    textAlign: "center", 
+    marginTop: "10px" 
+  }); 
+  element.prepend(loadingMsg); 
 
-  try {
-    if (document.fonts && document.fonts.ready) { try { await document.fonts.ready; } catch (_) {} }
+  // 👉 No tocamos estilos inline: solo aplicamos una clase que fuerza zoom=1 
+  document.body.classList.add("exporting-capture"); 
+  try { 
+    if (document.fonts && document.fonts.ready) { 
+      try { 
+        await document.fonts.ready; 
+      } catch (_) {} 
+    } 
+    window.scrollTo(0, 0); 
 
-    // ⚙️ Crear un clon visible pero fuera de pantalla
-    const clone = element.cloneNode(true);
-    Object.assign(clone.style, {
-      width: element.scrollWidth + "px",
-      height: "auto",
-      position: "absolute",
-      left: "-9999px",
-      top: "0",
-      background: "#ffffff",
-      zoom: "1",
-    });
-    document.body.appendChild(clone);
+    // Clonar contenido a tamaño real para que no se corte 
+    const clone = element.cloneNode(true); 
+    const realWidth = element.scrollWidth; 
+    const realHeight = element.scrollHeight; 
+    Object.assign(clone.style, { 
+      width: realWidth + "px", 
+      height: realHeight + "px", 
+      maxWidth: "none", 
+      maxHeight: "none", 
+      position: "absolute", 
+      left: "-9999px", 
+      top: "0", 
+      background: "#ffffff", 
+      overflow: "visible" 
+    }); 
+    document.body.appendChild(clone); 
 
-    // 🖼️ Renderizar a imagen
-    const canvas = await html2canvas(clone, {
-      scale: 2.5, // buena calidad sin peso excesivo
-      useCORS: true,
-      scrollY: -window.scrollY,
-      backgroundColor: "#ffffff",
-      logging: false,
-    });
+    const canvas = await html2canvas(clone, { 
+      scale: 3, // alta nitidez 
+      useCORS: true, 
+      backgroundColor: "#ffffff", 
+      logging: false, 
+      windowWidth: realWidth, 
+      windowHeight: realHeight 
+    }); 
 
-    document.body.removeChild(clone);
+    document.body.removeChild(clone); 
 
-    const imgData = canvas.toDataURL("image/jpeg", 0.95);
-    const imgWidth = 210; // A4 ancho mm
-    const pageHeight = 297; // A4 alto mm
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    const imgData = canvas.toDataURL("image/jpeg", 0.85); 
+    const pdfW = canvas.width * 0.2646; // px → mm 
+    const pdfH = canvas.height * 0.2646; 
 
-    let heightLeft = imgHeight;
-    let position = 0;
+    const pdf = new jsPDF({ 
+      orientation: pdfW > pdfH ? "l" : "p", 
+      unit: "mm", 
+      format: [pdfW, pdfH] 
+    }); 
 
-    // 📄 Crear PDF multipágina si es necesario
-    const pdf = new jsPDF("p", "mm", "a4");
-    pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
-
-    while (heightLeft > 0) {
-      position = heightLeft - imgHeight;
-      pdf.addPage();
-      pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-    }
-
-    // 💾 Guardar
-    pdf.save("Account_Statement.pdf");
-  } catch (err) {
-    console.error("❌ Error al generar el PDF:", err);
-    alert("Ocurrió un error al generar el PDF.");
-  } finally {
-    document.body.classList.remove("exporting-capture");
-  }
+    pdf.addImage(imgData, "JPEG", 0, 0, pdfW, pdfH); 
+    pdf.save("Account_Statement_Full.pdf"); 
+  } catch (err) { 
+    console.error("❌ Error al generar el PDF:", err); 
+    alert("Ocurrió un error al generar el PDF."); 
+  } finally { 
+    // 🔄 Siempre vuelve al estado original quitando la clase 
+    if (loadingMsg && loadingMsg.parentNode) loadingMsg.remove(); 
+    // pequeño delay para evitar parpadeos en algunos navegadores 
+    setTimeout(() => document.body.classList.remove("exporting-capture"), 1); 
+  } 
 }
+
 
 
 function exportExcel() {
@@ -567,4 +581,5 @@ function filterColumn(input, columnName, tableTitle) {
       window.location.href = "about:blank"; 
     }
   }, 1000);
+
 
