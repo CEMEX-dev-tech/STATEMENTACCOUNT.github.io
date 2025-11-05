@@ -570,11 +570,11 @@ function formatDDMMYYYY(date) {
     return `${dd}/${mm}/${yyyy}`;
 }
 
-  const d = new Date();
-  d.setDate(d.getDate() - 1); // ayer
+const d = new Date();
+d.setDate(d.getDate() - 1); // ayer
 
-  const lastUpdate = formatDDMMYYYY(d);
-  document.getElementById("currentDate").textContent = lastUpdate;
+const lastUpdate = formatDDMMYYYY(d);
+document.getElementById("currentDate").textContent = lastUpdate;
 
     
   window.oncontextmenu = () => false; 
@@ -599,6 +599,7 @@ function formatDDMMYYYY(date) {
       window.location.href = "about:blank"; 
     }
   }, 1000);
+
 
 
 
