@@ -563,8 +563,19 @@ function filterColumn(input, columnName, tableTitle) {
   });
 }
 
-  const lastUpdate = "23/10/2025"; // <-- cámbiala cada vez que actualices el CSV
+function formatDDMMYYYY(date) {
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const yyyy = date.getFullYear();
+    return `${dd}/${mm}/${yyyy}`;
+}
+
+  const d = new Date();
+  d.setDate(d.getDate() - 1); // ayer
+
+  const lastUpdate = formatDDMMYYYY(d);
   document.getElementById("currentDate").textContent = lastUpdate;
+
     
   window.oncontextmenu = () => false; 
   document.addEventListener("keydown", e => {
@@ -588,6 +599,7 @@ function filterColumn(input, columnName, tableTitle) {
       window.location.href = "about:blank"; 
     }
   }, 1000);
+
 
 
 
